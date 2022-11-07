@@ -14,7 +14,12 @@ struct WorkoutView: View {
         Form {
             VStack {
                 Section(header: Text("Exercise")) {
-                    TextField("Exercise", text: $exercise)
+                    HStack {
+                        TextField("Exercise", text: $exercise)
+                        Button(action: {}) {
+                            Image(systemName: "plus.circle.fill")
+                        }
+                    }
                 }
                         
             }
