@@ -11,7 +11,9 @@ import SwiftUI
 struct Fit_JourneyApp: App {
     var body: some Scene {
         WindowGroup {
-            ContentView()
+            NavigationView {
+                WorkoutsListView(workouts: WorkoutTemplate.sampleData)
+            }
         }
     }
 }
