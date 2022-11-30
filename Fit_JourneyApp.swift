@@ -9,6 +9,9 @@ import SwiftUI
 
 @main
 struct Fit_JourneyApp: App {
+    
+    // @StateObject private var store =
+    
     var body: some Scene {
         WindowGroup {
             NavigationView {

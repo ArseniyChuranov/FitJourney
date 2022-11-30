@@ -20,7 +20,7 @@ struct WorkoutsListView: View {
                 .padding(.leading) // optional
             }
         }
-        .navigationTitle("Workout")
+        .navigationTitle("Workouts")
         .toolbar {
             Button (action: {}) {
                 Image(systemName: "plus")

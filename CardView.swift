@@ -9,6 +9,7 @@ import SwiftUI
 
 struct CardView: View {
     let workout: WorkoutTemplate
+    
     var body: some View {
         VStack(alignment: .leading) {
             Text(workout.title)
@@ -17,6 +18,8 @@ struct CardView: View {
             HStack {
                 Label("\(workout.exercise.count)", systemImage: "dumbbell")
                 Spacer()
+                
+                // Create text with date and insert on opposite site.
             }
             //.font(.caption)
         }

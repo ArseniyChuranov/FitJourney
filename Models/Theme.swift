@@ -5,6 +5,10 @@
 //  Created by Arseniy Churanov on 11/7/22.
 //
 
+
+// Figure a purpose for themes, and make sure i specify cases for them. Color could work well for morning/day/evening/night cases, as well as other purposes.
+
+
 import SwiftUI
 
 enum Theme: String {
