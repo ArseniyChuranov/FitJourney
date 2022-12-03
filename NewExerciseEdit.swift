@@ -34,7 +34,8 @@ struct NewExerciseEdit: View {
                         TextField("New Exercise", text: $newExerciseName)
                         Button (action: {
                             withAnimation {
-                                let exercise = WorkoutTemplate.ExerciseData(workoutName: newExerciseName, sets: 0, reps: 0, weight: 0) // should be added later with other inputs.
+                                let exercise = WorkoutTemplate.ExerciseData(workoutName: newExerciseName,
+                                                                            exerciseSets: [WorkoutTemplate.ExerciseSet(sets: 1, reps: 1, weight: 1)]) // should be added later with other inputs.
                                 data.exercise.append(exercise)
 
                             }

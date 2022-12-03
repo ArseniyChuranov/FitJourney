@@ -24,6 +24,8 @@
 
 import Foundation
 
+// Workout template is essentially a workout, it contains unique ID, workout name, exercises, and a theme
+
 struct WorkoutTemplate: Identifiable {
     var id: UUID
     var title: String
@@ -43,61 +45,58 @@ struct WorkoutTemplate: Identifiable {
 
 extension WorkoutTemplate {
     
-    //while following tutotial im not sure i need this.
-    
-    struct Exercise: Identifiable {
-        let id: UUID
-        var name: String
-        
-        init(id: UUID = UUID(), name: String) {
-            self.id = id
-            self.name = name
-        }
-    }
+    // ExerciseData is essentialy an exercise, each exercise have a name, at least one set with one rep, and weight for it. it has a possibility to have more
     
     struct ExerciseData: Identifiable {
         let id: UUID
         var workoutName: String
-        var sets: Int?
-        var reps: Int?
-        var weight: Int?
+        var exerciseSets: [ExerciseSet]
         
-        init(id: UUID = UUID(), workoutName: String, sets: Int, reps: Int, weight: Int) {
+        init(id: UUID = UUID(), workoutName: String, exerciseSets: [ExerciseSet]) {
             self.id = id
             self.workoutName = workoutName
-            self.sets = sets
+            self.exerciseSets = exerciseSets
+        }
+    }
+    
+    // for countablity i should add an id system to keep track of each set and so on. can be used as a good trend system in future
+    // ExerciseSet is a list of sets per exercise with reps and weight
+    
+    struct ExerciseSet: Identifiable {
+        let id: UUID
+        let sets: Int // think about making sets individual in order, it will make it simpler to store and to read
+        let reps: Int
+        let weight: Int
+        
+        init(id: UUID = UUID(),sets: Int, reps: Int, weight: Int) {
+            self.id = id
+            self.sets = sets // will use it as a count measure for now. later might be a problem so will adopt a new strategy
             self.reps = reps
             self.weight = weight
         }
     }
     
-    // for countablity i should be able 
+    // Struct Sets allows to pass bindings of ExerciseSet
     
-    struct ExerciseSet {
-        let set: Int
-        let rep: Int
-        let weight: Int
-        
-        init(set: Int, rep: Int, weight: Int) {
-            self.set = set
-            self.rep = rep
-            self.weight = weight
-        }
+    struct Sets {
+        var sets: [ExerciseSet] = [] //WorkoutTemplate.sampleData[0].exercise[0].exerciseSets // no
     }
+    
+    // variable SetsData allows to create new Sets??
+    
+    var setsData: Sets {
+        Sets()
+    }
+    
+    // struct Data allows to create new workouts and pass them as bindings // study this
     
     struct Data {
         var title: String = ""
         var exercise: [ExerciseData] = []
-        /*
-        [
-            CompleteWorkoutData(workoutName: "Bench Press", sets: 3, reps: 20, weight: 150),
-            CompleteWorkoutData(workoutName: "Military Press", sets: 4, reps: 82, weight: 120),
-           CompleteWorkoutData(workoutName: "Pushups", sets: 3, reps: 22, weight: 0)
-        ]
-         */
-        //  [ CompleteWorkoutData(workoutName: "New Workout", sets: 0, reps: 0, weight: 0) ] // can be left empty but for now its like this
         var theme: Theme = .seafoam
     }
+    
+    // var data allows to pass Data as binding??
     
     var data: Data {
         Data(title: title, exercise: exercise, theme: theme)
@@ -105,31 +104,35 @@ extension WorkoutTemplate {
 }
 
 
-
-extension WorkoutTemplate {
-    struct ExerciseValue: Identifiable, Hashable {
-        let id: UUID
-        var value: Double
-        
-        init(id: UUID = UUID(), value: Double) {
-            self.id = id
-            self.value = value
-        }
-    }
-
-}
- 
-
 extension WorkoutTemplate {
     static let sampleData: [WorkoutTemplate] =
     [
         WorkoutTemplate(title: "Push", exercise: [
-            ExerciseData(workoutName: "Bench Press", sets: 3, reps: 10, weight: 150),
-            ExerciseData(workoutName: "Military Press", sets: 4, reps: 8, weight: 120),
-            ExerciseData(workoutName: "Pushups", sets: 3, reps: 12, weight: 0)
+            ExerciseData(workoutName: "Bench Press", exerciseSets: [ExerciseSet(sets: 1, reps: 12, weight: 70),
+                                                                    ExerciseSet(sets: 2, reps: 10, weight: 120),
+                                                                    ExerciseSet(sets: 3, reps: 6, weight: 150)]),
+            ExerciseData(workoutName: "Military Press", exerciseSets: [ExerciseSet(sets: 1, reps: 12, weight: 50),
+                                                                       ExerciseSet(sets: 2, reps: 8, weight: 85),
+                                                                       ExerciseSet(sets: 3, reps: 6, weight: 100)]),
+            ExerciseData(workoutName: "Pushups", exerciseSets: [ExerciseSet(sets: 1, reps: 12, weight: 100),
+                                                                ExerciseSet(sets: 2, reps: 8, weight: 150)])
         ], theme: .seafoam),
-        WorkoutTemplate(title: "Pull", exercise: [], theme: .lavender),
-        WorkoutTemplate(title: "Legs", exercise: [], theme: .navy)
+        WorkoutTemplate(title: "Pull", exercise: [
+            ExerciseData(workoutName: "Pull-ups", exerciseSets: [ExerciseSet(sets: 1, reps: 10, weight: 0),
+                                                                 ExerciseSet(sets: 2, reps: 8, weight: 10),
+                                                                 ExerciseSet(sets: 3, reps: 6, weight: 20)]),
+            ExerciseData(workoutName: "Biceps Curls", exerciseSets: [ExerciseSet(sets: 1, reps: 10, weight: 20),
+                                                                     ExerciseSet(sets: 2, reps: 8, weight: 30),
+                                                                     ExerciseSet(sets: 3, reps: 6, weight: 45)])
+        ], theme: .lavender),
+        WorkoutTemplate(title: "Legs", exercise: [
+            ExerciseData(workoutName: "Squats", exerciseSets: [ExerciseSet(sets: 1, reps: 14, weight: 120),
+                                                               ExerciseSet(sets: 2, reps: 8, weight: 160),
+                                                               ExerciseSet(sets: 3, reps: 6, weight: 240)]),
+            ExerciseData(workoutName: "Romanian Deadlift", exerciseSets: [ExerciseSet(sets: 1, reps: 12, weight: 60),
+                                                                          ExerciseSet(sets: 2, reps: 10, weight: 80),
+                                                                          ExerciseSet(sets: 3, reps: 8, weight: 120)])
+        ], theme: .navy)
     
     ]
 }
@@ -147,5 +150,8 @@ extension WorkoutTemplate {
      
      ]
  }
+ 
+ ExerciseData(workoutName: "Military Press", sets: 4, reps: 8, weight: 120),
+ ExerciseData(workoutName: "Pushups", sets: 3, reps: 12, weight: 0)
  
  */

@@ -10,6 +10,7 @@
 import SwiftUI
 
 struct DetailEditView: View {
+    
     @Binding var data: WorkoutTemplate.Data // need to make sure i got correct binding
     
     @State private var showPicker = false
@@ -18,24 +19,10 @@ struct DetailEditView: View {
     var body: some View {
         List {
             Section(header: Text("Workout Info")) {
-                    ForEach(data.exercise) { exercise in
-                        VStack {
-                            HStack {
-                                Label(exercise.workoutName, systemImage: "dumbbell")
-                                Spacer()
-                                Text("Weight")
-                                Text(String(Int(exercise.weight != nil ? exercise.weight! : 0))) // THAT WORKED
-                            }
-                            Spacer()
-                            HStack {
-                                Text("Reps")
-                                Text(String(Int(exercise.sets != nil ? exercise.sets! : 0)))
-                                Spacer()
-                                Text("Sets")
-                                Text(String(Int(exercise.reps != nil ? exercise.reps! : 0)))
-                            }
-                        }
-                    }
+                ForEach(data.exercise) {exercise in
+                    ExerciseCardView(exercise: exercise)
+                }
+                
                 
                 // .onDelete { indices in
                 //     data.exercise.remove(atOffsets: indices)
@@ -76,3 +63,32 @@ HStack {
      
     }
 } */
+
+
+
+
+
+// v2
+
+/*
+ 
+ ForEach(data.exercise) { exercise in
+         VStack {
+             HStack {
+                 Label(exercise.workoutName, systemImage: "dumbbell")
+                 Spacer()
+                 Text("Weight")
+                 Text(String(Int(exercise.weight != nil ? exercise.weight! : 0))) // THAT WORKED
+             }
+             Spacer()
+             HStack {
+                 Text("Reps")
+                 Text(String(Int(exercise.sets != nil ? exercise.sets! : 0)))
+                 Spacer()
+                 Text("Sets")
+                 Text(String(Int(exercise.reps != nil ? exercise.reps! : 0)))
+             }
+         }
+     }
+ 
+ */

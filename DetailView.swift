@@ -11,50 +11,69 @@ struct DetailView: View {
     
     let workout: WorkoutTemplate
     
+    
+    
     @State private var data = WorkoutTemplate.Data() // uses data instead of sample data
+    
     
     @State private var newExerciseName = ""
     @State private var newExerciseWeightValue = ""
-    @State private var newExerciseSetsValue = ""
     @State private var newExerciseRepsValue = ""
+    @State private var newExerciseSetsValue: Int = 0
     
     @State private var isPresentingEditingView = false
-    
+    @State private var isPresentingAddNewSetView = false // to present a view that will allow to add a new set to a card
     
     var body: some View {
         List {
-            //change statement later when will have data saving option
-            if !(data.exercise.isEmpty) {
-                Section(header: Text("Workout Info")) {
-                        ForEach(data.exercise) { exercise in
-                            VStack {
-                                HStack {
-                                    Label(exercise.workoutName, systemImage: "dumbbell")
-                                    Spacer()
-                                    Text("Weight")
-                                    Text(String(Int(exercise.weight != nil ? exercise.weight! : 0))) // THAT WORKED
-                                }
-                                Spacer()
-                                HStack {
-                                    Text("Reps")
-                                    Text(String(Int(exercise.sets != nil ? exercise.sets! : 0)))
-                                    Spacer()
-                                    Text("Sets")
-                                    Text(String(Int(exercise.reps != nil ? exercise.reps! : 0)))
-                                }
-                            }
-                        }
-                    
-                    // .onDelete { indices in
-                    //     data.exercise.remove(atOffsets: indices)
-                    // }
-                    
-                    // create a view input that will take data and insert it to thiw view
-                    
+            
+            if !(workout.exercise.isEmpty) {
+                
+                // possibly create 2 separate views, one with adding a button, another is not
+                
+                // let workoutSets = workout.setsData.sets
+                
+                ForEach(workout.exercise) {exercise in
+                    ExerciseCardView(exercise: exercise)
+                        .listRowBackground(workout.theme.mainColor)
                 }
                 
+                
+                
+                /*
+                 
+                 .onTapGesture(count: 2) {
+                     withAnimation {
+                         if (isPresentingAddNewSetView == false) {
+                             isPresentingAddNewSetView = true
+                         } else {
+                             isPresentingAddNewSetView = false
+                         }
+                     }
+                 }
+             
+                 if(isPresentingAddNewSetView == true)
+                 {
+                     Text("test feature") // present in the end not in the view.
+                 }
+                 
+                 */
+                
+                
+                
+                //. ondelete is useless now, maybe keep it as a separate thing.
+                //.onDelete {indices in
+                //    data.exercise.remove(atOffsets: indices)
+                //}
             }
-            Section(header: Text("New workout")) {
+            
+            /*
+            
+            // make a createNew a separate view and get rid of section
+            Section(header: Text("New exercise")) {
+                
+                // change it later to a card view that will create a new exercise
+                
                 VStack {
                     HStack {
                         TextField("New Exercise", text: $newExerciseName)
@@ -64,21 +83,19 @@ struct DetailView: View {
                         
                     }
                     HStack {
-                        TextField("Sets", text: $newExerciseSetsValue)
-                            .keyboardType(.numberPad)
-                        Spacer()
                         TextField("Reps", text: $newExerciseRepsValue)
                             .keyboardType(.numberPad)
                     }
                     Spacer()
                     Button (action: { // choose new location
                         withAnimation {
+                            newExerciseSetsValue = workout.exercise.count + 1 // simply wrong, work on it later 
                             let exercise = WorkoutTemplate.ExerciseData(workoutName: newExerciseName,
-                                                                               sets: Int(newExerciseSetsValue) != nil ? Int(newExerciseSetsValue)! : 0,
-                                                                               reps: Int(newExerciseRepsValue) != nil ? Int(newExerciseRepsValue)! : 0,
-                                                                               weight: Int(newExerciseWeightValue) != nil ? Int(newExerciseWeightValue)! : 0)
+                                                                        exerciseSets: [WorkoutTemplate.ExerciseSet(sets: newExerciseSetsValue,
+                                                                                                                   reps: Int(newExerciseRepsValue) ?? 1,
+                                                                                                                   weight: Int(newExerciseWeightValue) ?? 0)])
                             // print(exercise)
-                            data.exercise.append(exercise)
+                            data.exercise.append(exercise) // work on this later to make sure it does what it needs do
                             // clean entries after each add
                         }
                     }) {
@@ -88,8 +105,16 @@ struct DetailView: View {
                     //.keyboardType(.numberPad)
                 }
             }
+            
+            */
+            
         }
+        
+        // Edit button still needs to be discussed wether will be used.
         .navigationTitle(workout.title)
+        
+        
+        
         .toolbar {
             Button("Edit")
             {
@@ -115,6 +140,9 @@ struct DetailView: View {
                 }
             }
         }
+        
+        
+        
     }
 }
 
@@ -125,3 +153,69 @@ struct DetailView_Previews: PreviewProvider {
         }
     }
 }
+
+
+
+/*
+ 
+ Section(header: Text("Workout Info")) {
+     ForEach(data.exercise) { exercise in
+             VStack {
+                 HStack {
+                     Label(exercise.workoutName, systemImage: "dumbbell")
+                     Spacer()
+                     Text("Weight")
+                     Text(String(Int(exercise.weight))) // THAT WORKED
+                 }
+                 Spacer()
+                 HStack {
+                     Text("Reps")
+                     Text(String(Int(exercise.sets)))
+                     Spacer()
+                     Text("Sets")
+                     Text(String(Int(exercise.reps)))
+                 }
+             }
+         }
+     
+     // .onDelete { indices in
+     //     data.exercise.remove(atOffsets: indices)
+     // }
+     
+     // create a view input that will take data and insert it to thiw view
+     
+ }
+ 
+ */
+
+
+
+/*
+ 
+ VStack {
+     HStack {
+         Label(exercise.workoutName, systemImage: "dumbbell")
+     }
+     HStack {
+         
+         // i don't like this solution
+         // compiler says it takes too much time to process
+         
+         // also temp solution since i will be using a card view for each exercise
+         if !(exercise.exerciseSets.isEmpty) {
+             ForEach(exercise.exerciseSets) { individualSet in
+                 Text("Sets:")
+                 Text(String(individualSet.sets))
+                 Spacer()
+                 Text("Reps:")
+                 Text(String(individualSet.reps))
+                 Spacer()
+                 Text("Weight:")
+                 Text(String(individualSet.weight))
+             }
+         }
+         
+     }
+ }
+ 
+ */

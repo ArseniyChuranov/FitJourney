@@ -8,13 +8,26 @@
 import SwiftUI
 
 struct SetsWithRepsCardView: View {
+    let exerciseSets: WorkoutTemplate.ExerciseSet
+    @State private var sets = WorkoutTemplate.Sets()
+
+    
+    
     var body: some View {
-        Text(/*@START_MENU_TOKEN@*/"Hello, World!"/*@END_MENU_TOKEN@*/)
+        HStack {
+            Text("Set")
+            Spacer()
+            Text("Reps: \(exerciseSets.reps)")
+            Spacer()
+            Text("Weight: \(exerciseSets.weight)")
+        }
+       // .padding()
     }
 }
 
 struct SetsWithRepsCardView_Previews: PreviewProvider {
+    static var exerciseSets = WorkoutTemplate.ExerciseSet(sets: 1, reps: 1, weight: 10)
     static var previews: some View {
-        SetsWithRepsCardView()
+        SetsWithRepsCardView(exerciseSets: WorkoutTemplate.sampleData[0].exercise[0].exerciseSets[0])
     }
 }
