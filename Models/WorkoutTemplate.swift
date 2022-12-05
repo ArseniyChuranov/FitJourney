@@ -31,6 +31,7 @@ struct WorkoutTemplate: Identifiable {
     var title: String
     var exercise: [ExerciseData]
     var theme: Theme
+    var history: [History] = []
     
     init(id: UUID = UUID(), title: String, exercise: [ExerciseData], theme: Theme) {
         self.id = id
@@ -100,6 +101,19 @@ extension WorkoutTemplate {
     
     var data: Data {
         Data(title: title, exercise: exercise, theme: theme)
+    }
+    
+    mutating func update(from data: Data) {
+        title = data.title
+        exercise = data.exercise
+        theme = data.theme
+    }
+    
+    init(data: Data){
+        id = UUID()
+        title = data.title
+        exercise = data.exercise
+        theme = data.theme
     }
 }
 

@@ -9,13 +9,11 @@ import SwiftUI
 
 @main
 struct Fit_JourneyApp: App {
-    
-    // @StateObject private var store =
-    
+    @State private var workouts = WorkoutTemplate.sampleData
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                WorkoutsListView(workouts: WorkoutTemplate.sampleData)
+                WorkoutsListView(workouts: $workouts)
             }
         }
     }

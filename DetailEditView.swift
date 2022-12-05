@@ -11,7 +11,9 @@ import SwiftUI
 
 struct DetailEditView: View {
     
-    @Binding var data: WorkoutTemplate.Data // need to make sure i got correct binding
+    @Binding var data: WorkoutTemplate.Data // Binding to pass Data from exercises
+    @Binding var setsData: WorkoutTemplate.Sets
+    // @Binding var setsData: WorkoutTemplate.Sets
     
     @State private var showPicker = false
     @State private var currentPick = 0
@@ -19,8 +21,8 @@ struct DetailEditView: View {
     var body: some View {
         List {
             Section(header: Text("Workout Info")) {
-                ForEach(data.exercise) {exercise in
-                    ExerciseCardView(exercise: exercise)
+                ForEach($data.exercise) {$exercise in
+                    ExerciseCardView(exercise: $exercise, setsData: $setsData)
                 }
                 
                 
@@ -37,7 +39,7 @@ struct DetailEditView: View {
 
 struct DetailEditView_Previews: PreviewProvider {
     static var previews: some View {
-        DetailEditView(data: .constant(WorkoutTemplate.sampleData[0].data))
+        DetailEditView(data: .constant(WorkoutTemplate.sampleData[0].data), setsData: .constant(WorkoutTemplate.Sets()))
     }
 }
 
