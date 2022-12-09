@@ -24,7 +24,7 @@ struct DetailEditView: View {
                 ForEach($data.exercise) {$exercise in
                     // do i need a group here?
                     Group {
-                        ExerciseCardView(exercise: $exercise)
+                        ListExerciseCardView(exercise: exercise)
                     }
                 }
                 

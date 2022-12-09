@@ -23,10 +23,19 @@
  */
 
 import Foundation
+import Combine 
 
+/*
+final class WorkoutTemplate: ObservableObject {
+    @Published var workoutTemplate: [WorkoutTemplate] =
+}
+ 
+ // i can try to make it as an observable obkect when i introduce a load/save feature.
+ 
+ */
 // Workout template is essentially a workout, it contains unique ID, workout name, exercises, and a theme
 
-struct WorkoutTemplate: Identifiable {
+struct WorkoutTemplate: Identifiable, Codable {
     var id: UUID
     var title: String
     var exercise: [ExerciseData]
@@ -48,7 +57,7 @@ extension WorkoutTemplate {
     
     // ExerciseData is essentialy an exercise, each exercise have a name, at least one set with one rep, and weight for it. it has a possibility to have more
     
-    struct ExerciseData: Identifiable {
+    struct ExerciseData: Identifiable, Codable {
         let id: UUID
         var workoutName: String
         var exerciseSets: [ExerciseSet]

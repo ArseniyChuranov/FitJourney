@@ -8,7 +8,7 @@
 import Foundation
 
 
-struct ExerciseSet: Identifiable {
+struct ExerciseSet: Identifiable, Codable {
     let id: UUID
     var sets: Int // think about making sets individual in order, it will make it simpler to store and to read
     var reps: Int

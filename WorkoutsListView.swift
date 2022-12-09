@@ -9,9 +9,11 @@ import SwiftUI
 
 struct WorkoutsListView: View {
     @Binding var workouts: [WorkoutTemplate]
+    @Environment(\.scenePhase) private var scenePhase
     
     @State private var isPresentingNewWorkoutView = false
     @State private var newExercise = WorkoutTemplate.Data()
+    let saveAction: ()->Void
     
     var body: some View {
         List {
@@ -33,11 +35,6 @@ struct WorkoutsListView: View {
             }
         }
         .sheet(isPresented: $isPresentingNewWorkoutView) {
-            
-            Image("egg")
-            
-            /*
-            
             NavigationView {
                 NewExerciseEdit(data: $newExercise) // for now its a terrible solution I have to figure that one out, i shouldn't pass a separate exercise value, it should be included
                     .toolbar {
@@ -58,8 +55,9 @@ struct WorkoutsListView: View {
                         }
                     }
             }
-            
-            */
+        }
+        .onChange(of: scenePhase) { phase in
+            if phase == .inactive { saveAction() }
         }
     }
 }
@@ -67,7 +65,7 @@ struct WorkoutsListView: View {
 struct WorkoutsListView_Previews: PreviewProvider {
     static var previews: some View {
         NavigationView {
-            WorkoutsListView(workouts: .constant(WorkoutTemplate.sampleData))
+            WorkoutsListView(workouts: .constant(WorkoutTemplate.sampleData), saveAction: {})
         }
     }
 }

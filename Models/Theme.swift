@@ -11,7 +11,7 @@
 
 import SwiftUI
 
-enum Theme: String {
+enum Theme: String, Codable {
     case navy
     case seafoam
     case lavender

@@ -19,11 +19,9 @@ struct ExerciseCardView: View {
     @State private var isAddingNewSets = false
     @State private var isPresentingAddNewSetView = false
     @State private var isPresentingEditingView = false
-    
-     // let exercise: WorkoutTemplate.ExerciseData
-    // @Binding var exercise: WorkoutTemplate.ExerciseData // might needed to be changed, for now im confused
-    // @Binding var setsData: WorkoutTemplate.Sets // that broke my things // prolly dont need it
+ 
     @Binding var exercise: WorkoutTemplate.ExerciseData
+    @State private var newExercise = ExerciseSet.Sets()
     // var exerciseSetsData = ExerciseSet.Sets()
     
     var body: some View {
@@ -34,11 +32,7 @@ struct ExerciseCardView: View {
             
             VStack(alignment: .center) {
                 if(exercise.exerciseSets.isEmpty) {
-                    // create a separate view later to reuse it and make it simpler
-                    
                     //  Default view that presents in case there are no sets for a workout
-                    
-                    // temp View that is similar to an individual cell
                     VStack {
                         HStack {
                             Text(exercise.workoutName)
@@ -69,106 +63,49 @@ struct ExerciseCardView: View {
                         }
                     }
                     .padding()
-                    //.background(.white) // order matters a lot!
                     .cornerRadius(15)
-                    // .backgroundStyle(.opacity(2.0))
                 } else {
                     VStack {
                         HStack {
                             Text(exercise.workoutName)
                                 .font(.title2)
                         }
-                        ForEach(exercise.exerciseSets) {individualSet in
-                            HStack {
-                                Text("Set:")
-                                Text(String("\(individualSet.sets)")) // fix? no / for now it works due to the system that adds each new set with correct index.
-                                // create a system in future that will account for numeration if sets when sets are deleted.
-                                Spacer()
-                                Text("Reps:")
-                                Text(String(individualSet.reps))
-                                Spacer()
-                                Text("Weight:")
-                                Text(String(individualSet.weight))
+                        List {
+                            ForEach(exercise.exerciseSets) {individualSet in
+                                HStack {
+                                    Text("Set:")
+                                    Text(String("\(individualSet.sets)"))
+                                    Spacer()
+                                    Text("Reps:")
+                                    Text(String(individualSet.reps))
+                                    Spacer()
+                                    Text("Weight:")
+                                    Text(String(individualSet.weight))
+                                }
+                                .frame(height: 15)
                             }
-                            .frame(height: 15)
-                        }
-                        // List allows to delete and edit things yet it brakes an app. investigate in future
-                        // .onDelete(perform: {indices in exercise.exerciseSets.remove(atOffsets: indices)})
-                        /*
-                         
-                         // doesnt work, need to see connections
-                         // looks like it will work after i will have a solid update system of bindings for sets
-                         // so leave for now and later fix the binding so it actually does changes. as well as correctly counts sets.
-                        
-                        .onDelete {indices in
-                            setsData.sets.remove(atOffsets: indices)
-                         
-                            exercise.exerciseSets.remove(atOffsets: indices)
-                        }
-                        
-                        */
-                        .onTapGesture(count: 3) {
-                            if (isPresentingAddNewSetView == false) {
-                                isPresentingAddNewSetView = true
-                            } else {
-                                isPresentingAddNewSetView = false
-                                newRepValue = ""
-                                newWeightValue = ""
+                            // might leave all editinf for a separate view
+                            .onDelete {indices in
+                                exercise.exerciseSets.remove(atOffsets: indices)
                             }
                         }
                     }
                     .padding()
-                    //.background(.white)
                     .cornerRadius(15)
                     .backgroundStyle(.opacity(0.2)) // might be unnecessary
-                    
-                    .onDisappear {
-                        //print("current exercise.exerciseSets")
-                        //print(exercise.exerciseSets)
-                    }
-                }
-                
-                if(isPresentingAddNewSetView == true) {
-                    // presents view with addition
-                    HStack {
-                        Text("Add Set")
-                        TextField("Reps", text: $newRepValue)
-                            .keyboardType(.numberPad)
-                        TextField("Weight", text: $newWeightValue)
-                            .keyboardType(.numberPad)
-                        Button (action: {
-                            let newSet = ExerciseSet(sets: exercise.exerciseSets.count + 1,
-                                                     reps: Int(newRepValue) ?? 1,
-                                                     weight: Int(newWeightValue) ?? 1)
-                            
-                            // Even that it adds to a new set i will need to make it pass to an actual set later down the line
-                            // probably when i would use actual data instead of sample data. Might need to change later.
-                            
-                            //exercise.exerciseSets.append(newSet)
-                            isPresentingAddNewSetView = false
-                            
-                            
-                            
-                            //print("This is what is setsData.sets \(setsData.sets)")
-                            //print("This is what in exercise.exerciseSets \(exercise.exerciseSets)")
-                            
-                            newRepValue = ""
-                            newWeightValue = ""
-                            
-                        }) {
-                            Image(systemName: "plus")
+                    .toolbar {
+                        Button("Edit") {
+                            isPresentingEditingView = true
+                            // maybe add a func that will create a new instance of an exercise.
                         }
-                        .disabled(newWeightValue.isEmpty)
+                        .sheet(isPresented: $isPresentingEditingView) {
+                            EditExerciseCardView(exercise: $exercise)
+                        }
                     }
-                    .padding()
-                    //.background(.white)
-                    .cornerRadius(15)
-                    // .backgroundStyle(.opacity(2.0)) // might be unnecessary
                 }
             }
         }
         .cornerRadius(10)
-        // .padding() // it is what it is
     }
 }
 
@@ -178,10 +115,8 @@ struct ExerciseCardView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             ExerciseCardView(exercise: .constant(WorkoutTemplate.sampleData[0].exercise[0]))
-                .previewLayout(.fixed(width: 400, height: 60))
             
             ExerciseCardView(exercise: .constant(WorkoutTemplate.sampleData[0].exercise[0]))
-                .previewLayout(.fixed(width: 400, height: 60))
                 .environment(\.colorScheme, .dark)
         }
     }
@@ -257,5 +192,51 @@ struct ExerciseCardView_Previews: PreviewProvider {
              }
          }
  }
+ 
+ 
+ 
+ 
+ 
+ .onTapGesture(count: 3) {
+     if (isPresentingAddNewSetView == false) {
+         isPresentingAddNewSetView = true
+     } else {
+         isPresentingAddNewSetView = false
+         newRepValue = ""
+         newWeightValue = ""
+     }
+ }
+ 
+ 
+ 
+ 
+ if(isPresentingAddNewSetView == true) {
+     // presents view with addition
+     HStack {
+         Text("Add Set")
+         TextField("Reps", text: $newRepValue)
+             .keyboardType(.numberPad)
+         TextField("Weight", text: $newWeightValue)
+             .keyboardType(.numberPad)
+         Button (action: {
+             let newSet = ExerciseSet(sets: exercise.exerciseSets.count + 1,
+                                      reps: Int(newRepValue) ?? 1,
+                                      weight: Int(newWeightValue) ?? 1)
+             
+             exercise.exerciseSets.append(newSet)
+             isPresentingAddNewSetView = false
+             
+             newRepValue = ""
+             newWeightValue = ""
+             
+         }) {
+             Image(systemName: "plus")
+         }
+         .disabled(newWeightValue.isEmpty)
+     }
+     .padding()
+     .cornerRadius(15)
+ }
+ 
  
  */

@@ -8,7 +8,7 @@
 import SwiftUI
 
 struct CardView: View {
-    let workout: WorkoutTemplate
+    let workout: WorkoutTemplate // its not a binding thing here?
     
     var body: some View {
         VStack(alignment: .leading) {
