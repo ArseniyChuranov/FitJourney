@@ -9,11 +9,11 @@ import SwiftUI
 
 struct NewSetsCardView: View {
     
-    let exerciseSets: WorkoutTemplate.ExerciseSet
+    let exerciseSets: ExerciseSet
     
     
     
-    @State private var sets = WorkoutTemplate.Sets()
+    @State private var sets = ExerciseSet.Sets()
     @State private var exercise = WorkoutTemplate.Data()
     
     @State private var newSet = 0
@@ -33,11 +33,9 @@ struct NewSetsCardView: View {
             HStack {
                 Button(action: {
                     withAnimation {
-                        let newSet = WorkoutTemplate.ExerciseSet(sets: newSet + 1,
-                                                                 reps: Int(newRep) ?? 1,
-                                                                 weight: Int(newWeight) ?? 0)
-                        
-                        sets.sets.append(newSet)                        
+                        let newSet = ExerciseSet(sets: newSet + 1,
+                                                 reps: Int(newRep) ?? 1,
+                                                 weight: Int(newWeight) ?? 0)
                     }
                 }) {
                     Text("Add New Set")
@@ -51,7 +49,7 @@ struct NewSetsCardView: View {
 }
 
 struct NewSetsCardView_Previews: PreviewProvider {
-    static var exerciseSets = WorkoutTemplate.ExerciseSet(sets: 1, reps: 1, weight: 10)
+    static var exerciseSets = ExerciseSet(sets: 1, reps: 1, weight: 10)
     // static var exercise = WorkoutTemplate.ExerciseData(workoutName: "New exercise", exerciseSets: [exerciseSets] )
     
     static var previews: some View {

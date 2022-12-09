@@ -8,26 +8,38 @@
 import SwiftUI
 
 struct SetsWithRepsCardView: View {
-    let exerciseSets: WorkoutTemplate.ExerciseSet
-    @State private var sets = WorkoutTemplate.Sets()
+    // let exerciseSets: WorkoutTemplate.ExerciseSet
+    @Binding var exercise: WorkoutTemplate.ExerciseData
 
     
     
     var body: some View {
-        HStack {
-            Text("Set")
-            Spacer()
-            Text("Reps: \(exerciseSets.reps)")
-            Spacer()
-            Text("Weight: \(exerciseSets.weight)")
+        VStack {
+            Text("\(exercise.workoutName)")
+            ForEach(exercise.exerciseSets) {individualSets in
+                HStack{
+                    Text(String(individualSets.reps))
+                    Text(String(individualSets.weight))
+                }
+            }
+            Button(action: {
+                let newSet = ExerciseSet(sets: exercise.exerciseSets.count + 1,
+                                                         reps: 1,
+                                                         weight: 1
+                )
+                
+                exercise.exerciseSets.append(newSet)
+            }) {
+                Image(systemName: "plus")
+                
+            }
         }
        // .padding()
     }
 }
 
 struct SetsWithRepsCardView_Previews: PreviewProvider {
-    static var exerciseSets = WorkoutTemplate.ExerciseSet(sets: 1, reps: 1, weight: 10)
     static var previews: some View {
-        SetsWithRepsCardView(exerciseSets: WorkoutTemplate.sampleData[0].exercise[0].exerciseSets[0])
+        SetsWithRepsCardView(exercise: .constant(WorkoutTemplate.sampleData[0].exercise[0]))
     }
 }

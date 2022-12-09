@@ -60,34 +60,7 @@ extension WorkoutTemplate {
         }
     }
     
-    // for countablity i should add an id system to keep track of each set and so on. can be used as a good trend system in future
-    // ExerciseSet is a list of sets per exercise with reps and weight
-    
-    struct ExerciseSet: Identifiable {
-        let id: UUID
-        let sets: Int // think about making sets individual in order, it will make it simpler to store and to read
-        let reps: Int
-        let weight: Int
-        
-        init(id: UUID = UUID(),sets: Int, reps: Int, weight: Int) {
-            self.id = id
-            self.sets = sets // will use it as a count measure for now. later might be a problem so will adopt a new strategy
-            self.reps = reps
-            self.weight = weight
-        }
-    }
-    
-    // Struct Sets allows to pass bindings of ExerciseSet
-    
-    struct Sets {
-        var sets: [ExerciseSet] = [] //WorkoutTemplate.sampleData[0].exercise[0].exerciseSets // no
-    }
-    
-    // variable SetsData allows to create new Sets??
-    
-    var setsData: Sets {
-        Sets()
-    }
+    // all Exercise Set data was moved to a new struct
     
     // struct Data allows to create new workouts and pass them as bindings // study this
     

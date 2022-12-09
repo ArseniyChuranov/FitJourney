@@ -18,14 +18,19 @@ struct ExerciseCardView: View {
     
     @State private var isAddingNewSets = false
     @State private var isPresentingAddNewSetView = false
+    @State private var isPresentingEditingView = false
     
-    @Binding var exercise: WorkoutTemplate.ExerciseData // might needed to be changed, for now im confused
-    @Binding var setsData: WorkoutTemplate.Sets // that broke my things // prolly dont need it
+     // let exercise: WorkoutTemplate.ExerciseData
+    // @Binding var exercise: WorkoutTemplate.ExerciseData // might needed to be changed, for now im confused
+    // @Binding var setsData: WorkoutTemplate.Sets // that broke my things // prolly dont need it
+    @Binding var exercise: WorkoutTemplate.ExerciseData
+    // var exerciseSetsData = ExerciseSet.Sets()
     
     var body: some View {
         ZStack {
             Color("Background") // a simple way to create a background color for now.
                 .edgesIgnoringSafeArea(.all)
+                .opacity(0.5)
             
             VStack(alignment: .center) {
                 if(exercise.exerciseSets.isEmpty) {
@@ -46,11 +51,11 @@ struct ExerciseCardView: View {
                             TextField("Weight", text: $newWeightValue)
                                 .keyboardType(.numberPad)
                             Button (action: { // too simple of an action
-                                let newSet = WorkoutTemplate.ExerciseSet(sets: exercise.exerciseSets.count + 1,
-                                                                         reps: Int(newRepValue) ?? 1,
-                                                                         weight: Int(newWeightValue) ?? 1)
+                                let newSet = ExerciseSet(sets: exercise.exerciseSets.count + 1,
+                                                         reps: Int(newRepValue) ?? 1,
+                                                         weight: Int(newWeightValue) ?? 1)
                                 // Adds set to a list
-                                exercise.exerciseSets.append(newSet)
+                                //exercise.exerciseSets.append(newSet)
                                 // setsData.sets.append(newSet) // do i need this whole thing?
                                 // closes the view
                                 isPresentingAddNewSetView = false
@@ -66,7 +71,7 @@ struct ExerciseCardView: View {
                     .padding()
                     //.background(.white) // order matters a lot!
                     .cornerRadius(15)
-                    .backgroundStyle(.opacity(2.0))
+                    // .backgroundStyle(.opacity(2.0))
                 } else {
                     VStack {
                         HStack {
@@ -87,6 +92,8 @@ struct ExerciseCardView: View {
                             }
                             .frame(height: 15)
                         }
+                        // List allows to delete and edit things yet it brakes an app. investigate in future
+                        // .onDelete(perform: {indices in exercise.exerciseSets.remove(atOffsets: indices)})
                         /*
                          
                          // doesnt work, need to see connections
@@ -100,7 +107,7 @@ struct ExerciseCardView: View {
                         }
                         
                         */
-                        .onTapGesture(count: 1) {
+                        .onTapGesture(count: 3) {
                             if (isPresentingAddNewSetView == false) {
                                 isPresentingAddNewSetView = true
                             } else {
@@ -113,11 +120,11 @@ struct ExerciseCardView: View {
                     .padding()
                     //.background(.white)
                     .cornerRadius(15)
-                    .backgroundStyle(.opacity(2.0)) // might be unnecessary
+                    .backgroundStyle(.opacity(0.2)) // might be unnecessary
                     
                     .onDisappear {
-                        print("current exercise.exerciseSets")
-                        print(exercise.exerciseSets)
+                        //print("current exercise.exerciseSets")
+                        //print(exercise.exerciseSets)
                     }
                 }
                 
@@ -130,15 +137,14 @@ struct ExerciseCardView: View {
                         TextField("Weight", text: $newWeightValue)
                             .keyboardType(.numberPad)
                         Button (action: {
-                            let newSet = WorkoutTemplate.ExerciseSet(sets: exercise.exerciseSets.count + 1,
-                                                                     reps: Int(newRepValue) ?? 1,
-                                                                     weight: Int(newWeightValue) ?? 1
-                            )
+                            let newSet = ExerciseSet(sets: exercise.exerciseSets.count + 1,
+                                                     reps: Int(newRepValue) ?? 1,
+                                                     weight: Int(newWeightValue) ?? 1)
                             
                             // Even that it adds to a new set i will need to make it pass to an actual set later down the line
                             // probably when i would use actual data instead of sample data. Might need to change later.
                             
-                            exercise.exerciseSets.append(newSet)
+                            //exercise.exerciseSets.append(newSet)
                             isPresentingAddNewSetView = false
                             
                             
@@ -157,7 +163,7 @@ struct ExerciseCardView: View {
                     .padding()
                     //.background(.white)
                     .cornerRadius(15)
-                    .backgroundStyle(.opacity(2.0)) // might be unnecessary
+                    // .backgroundStyle(.opacity(2.0)) // might be unnecessary
                 }
             }
         }
@@ -171,10 +177,10 @@ struct ExerciseCardView: View {
 struct ExerciseCardView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            ExerciseCardView(exercise: .constant(WorkoutTemplate.sampleData[0].exercise[0]), setsData: .constant(WorkoutTemplate.sampleData[0].setsData))
+            ExerciseCardView(exercise: .constant(WorkoutTemplate.sampleData[0].exercise[0]))
                 .previewLayout(.fixed(width: 400, height: 60))
             
-            ExerciseCardView(exercise: .constant(WorkoutTemplate.sampleData[0].exercise[0]), setsData: .constant(WorkoutTemplate.sampleData[0].setsData))
+            ExerciseCardView(exercise: .constant(WorkoutTemplate.sampleData[0].exercise[0]))
                 .previewLayout(.fixed(width: 400, height: 60))
                 .environment(\.colorScheme, .dark)
         }
@@ -228,3 +234,28 @@ struct ExerciseCardView_Previews: PreviewProvider {
 
 
 
+/*
+ 
+ 
+ .onTapGesture(count: 2) {
+     isPresentingEditingView = true
+     
+     EditExerciseCardView(exercise: $exercise) // change to edit later
+         .navigationTitle(exercise.workoutName)
+         .toolbar {
+             ToolbarItem(placement: .cancellationAction) {
+                 Button("Cancel") {
+                     isPresentingEditingView = false
+                     
+                 }
+             }
+             ToolbarItem(placement: .confirmationAction) {
+                 Button("Done") {
+                     isPresentingEditingView = false
+                     // workout.update(from: data) // simply wrong
+                 }
+             }
+         }
+ }
+ 
+ */

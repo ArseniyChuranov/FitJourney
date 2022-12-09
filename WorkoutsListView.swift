@@ -22,16 +22,22 @@ struct WorkoutsListView: View {
                 .listRowBackground(workout.theme.mainColor)
                 .padding(.leading) // optional
             }
+
         }
         .navigationTitle("Workouts")
         .toolbar {
             Button (action: {
                 isPresentingNewWorkoutView = true
             }) {
-                Image(systemName: "plus")
+                Image(systemName: "person.circle.fill")
             }
         }
         .sheet(isPresented: $isPresentingNewWorkoutView) {
+            
+            Image("egg")
+            
+            /*
+            
             NavigationView {
                 NewExerciseEdit(data: $newExercise) // for now its a terrible solution I have to figure that one out, i shouldn't pass a separate exercise value, it should be included
                     .toolbar {
@@ -52,6 +58,8 @@ struct WorkoutsListView: View {
                         }
                     }
             }
+            
+            */
         }
     }
 }

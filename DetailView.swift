@@ -11,28 +11,43 @@ struct DetailView: View {
     
     @Binding var workout: WorkoutTemplate
     
+    
+    @State private var newSetValue = ""
+    @State private var newRepValue = ""
+    @State private var newWeightValue = ""
+    
+    
     // create a source of truth for sets and exercises here. Test and see if I should consider moving sources somewhere else.
     
     @State private var data = WorkoutTemplate.Data() // uses data instead of sample data
-    @State private var setsData = WorkoutTemplate.Sets() // lets try having state here // works?...
+    @State private var setsData = ExerciseSet.Sets() // lets try having state here // works?...
     
     // @Binding var setsData: WorkoutTemplate.Sets // i need this thing here?
     
     
     @State private var isPresentingEditingView = false
     @State private var isPresentingAddNewSetView = false // to present a view that will allow to add a new set to a card
+    @State private var isPresentingEditingExerciseView = false
+    
+    @State private var isPresentingEgg = false
     
     var body: some View {
         List {
             if !(workout.exercise.isEmpty) {
                 ForEach($workout.exercise) {$exercise in
-                    ExerciseCardView(exercise: $exercise, setsData: $setsData)
-                        .listRowBackground(workout.theme.mainColor)
+                    NavigationLink(destination: EditExerciseCardView(exercise: $exercise)) {
+                        ExerciseCardView(exercise: $exercise)
+                            .listRowBackground(workout.theme.mainColor)
+                    }
                 }
-                .onAppear {
-                    // setsData.sets = workout.setsData.sets // ???
+                .onDelete {indices in
+                    workout.exercise.remove(atOffsets: indices)
                 }
                 .onDisappear {
+                    
+                    // add some functionality here maybe to allow it update info?
+                    // read about dispatchQueue
+                    
                     // workout.update(from: data) // Im not sure itd what i need....  // lmao no
                     /*
                     setsData.sets = workout.setsData.sets // ???
@@ -48,17 +63,32 @@ struct DetailView: View {
                     // print(workout.exercise)
                 }
             }
+        
         }
+        
         .navigationTitle(workout.title)
+        
         .toolbar {
-            Button("Edit")
+            Button(action: {
+                isPresentingEgg = true
+            }) {
+                Image(systemName: "sun.max.trianglebadge.exclamationmark.fill")
+            }
+        }
+        .toolbar {
+            Button("Edit") // maybe change it to a "+" with a feature of adding a new exercise
             {
                 isPresentingEditingView = true
+                // looks like its a case when it creates a new instance and depending on changes eigher opdates ot or discards. i need same structure with editing my views.
+                // however if im making any changes, would it make sense to keep them?
                 data = workout.data // signs data to a new value // may be useful
             }
             .sheet(isPresented: $isPresentingEditingView) {
+                
+                // examine this, this section suppose to update information passed from one view to another.
+                
                 NavigationView {
-                    DetailEditView(data: $data, setsData: $setsData) // change to edit later
+                    DetailEditView(data: $data) // change to edit later // it takes data.
                         .navigationTitle(workout.title)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
@@ -70,16 +100,13 @@ struct DetailView: View {
                             ToolbarItem(placement: .confirmationAction) {
                                 Button("Done") {
                                     isPresentingEditingView = false
-                                    // workout.update(from: data) // simply wrong
+                                    workout.update(from: data) // simply wrong // but might be necessary
                                 }
                             }
                         }
                 }
             }
         }
-        
-        
-        
     }
 }
 
@@ -162,6 +189,17 @@ struct DetailView_Previews: PreviewProvider {
              }
          }
          
+     }
+ }
+ 
+ 
+ 
+ .sheet(isPresented: $isPresentingEgg) {
+     withAnimation {
+         Image("sunmoon")
+             //.ignoresSafeArea(edges: .all)
+             //.imageScale(.small)
+             // .resizable()
      }
  }
  

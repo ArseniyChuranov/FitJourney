@@ -12,7 +12,7 @@ import SwiftUI
 struct DetailEditView: View {
     
     @Binding var data: WorkoutTemplate.Data // Binding to pass Data from exercises
-    @Binding var setsData: WorkoutTemplate.Sets
+    // @Binding var setsData: WorkoutTemplate.Sets
     // @Binding var setsData: WorkoutTemplate.Sets
     
     @State private var showPicker = false
@@ -22,13 +22,16 @@ struct DetailEditView: View {
         List {
             Section(header: Text("Workout Info")) {
                 ForEach($data.exercise) {$exercise in
-                    ExerciseCardView(exercise: $exercise, setsData: $setsData)
+                    // do i need a group here?
+                    Group {
+                        ExerciseCardView(exercise: $exercise)
+                    }
                 }
                 
                 
-                // .onDelete { indices in
-                //     data.exercise.remove(atOffsets: indices)
-                // }
+                .onDelete { indices in
+                     data.exercise.remove(atOffsets: indices)
+                }
                 
                 // create a view input that will take data and insert it to thiw view
                 
@@ -39,7 +42,7 @@ struct DetailEditView: View {
 
 struct DetailEditView_Previews: PreviewProvider {
     static var previews: some View {
-        DetailEditView(data: .constant(WorkoutTemplate.sampleData[0].data), setsData: .constant(WorkoutTemplate.Sets()))
+        DetailEditView(data: .constant(WorkoutTemplate.sampleData[0].data))
     }
 }
 
