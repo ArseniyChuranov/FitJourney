@@ -9,30 +9,36 @@ import SwiftUI
 
 @main
 struct Fit_JourneyApp: App {
-    @State private var workouts = WorkoutTemplate.sampleData
+    // @State private var workouts = WorkoutTemplate.sampleData
     @StateObject private var store = WorkoutStore()
+    @State private var errorWrapper: ErrorWrapper?
     
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                WorkoutsListView(workouts: $store.workouts) {
-                    WorkoutStore.save(workouts: store.workouts) { result in
-                        if case .failure(let error) = result {
-                            fatalError(error.localizedDescription)
+                WorkoutsListView(workouts: store.workouts) {
+                    Task {
+                        do {
+                            try await WorkoutStore.save(workouts: store.workouts)
+                        } catch {
+                            errorWrapper = ErrorWrapper(error: error, guidance: "Try again later.")
                         }
                     }
                 }
             }
-            .onAppear {
-                WorkoutStore.load {result in
-                    switch result {
-                    case .failure(let error):
-                        fatalError(error.localizedDescription)
-                    case .success(let workouts):
-                        store.workouts = workouts
-                    }
+            .task {
+                do {
+                    store.workouts = try await WorkoutStore.load()
+                } catch {
+                    errorWrapper = ErrorWrapper(error: error, guidance: "Fit Journey will load sample data")
                 }
             }
+            .sheet(item: $errorWrapper, onDismiss: {
+                store.workouts = WorkoutTemplate.sampleData
+            }) { wrapper in
+                ErrorView(errorWrapper: wrapper)
+            }
+            .environmentObject(store)
         }
     }
 }

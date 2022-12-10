@@ -19,6 +19,19 @@ class WorkoutStore: ObservableObject {
         .appendingPathComponent("workouts.data")
     }
     
+    static func load() async throws -> [WorkoutTemplate] {
+        try await withCheckedThrowingContinuation {continuation in
+            load { result in
+                switch result {
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                case .success(let workout):
+                    continuation.resume(returning: workout)
+                }
+            }
+        }
+    }
+    
     static func load(completion: @escaping (Result<[WorkoutTemplate], Error>)->Void) {
         DispatchQueue.global(qos: .background).async {
             do {
@@ -36,6 +49,20 @@ class WorkoutStore: ObservableObject {
             } catch {
                 DispatchQueue.main.async {
                     completion(.failure(error))
+                }
+            }
+        }
+    }
+    
+    @discardableResult
+    static func save(workouts: [WorkoutTemplate]) async throws -> Int {
+        try await withCheckedThrowingContinuation {continuation in
+            save(workouts: workouts) {result in
+                switch result {
+                case .failure(let error):
+                    continuation.resume(throwing: error)
+                case .success(let workoutSaved):
+                    continuation.resume(returning: workoutSaved)
                 }
             }
         }
