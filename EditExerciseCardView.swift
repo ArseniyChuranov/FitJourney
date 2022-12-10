@@ -8,7 +8,6 @@
 import SwiftUI
 
 struct EditExerciseCardView: View {
-   
     @Binding var exercise: WorkoutTemplate.ExerciseData
      // @Binding var exerciseSets: ExerciseSet.Sets
     

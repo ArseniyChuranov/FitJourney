@@ -8,37 +8,63 @@
 import SwiftUI
 
 struct DetailView: View {
-    @Binding var workout: WorkoutTemplate
-   
-    @State private var data = WorkoutTemplate.Data() // uses data instead of sample data
-   //  @State private var setsData = ExerciseSet.Sets() // lets try having state here // works?...
+    // @Binding var workout: WorkoutTemplate // could that be a problem? // see if i can avoid binding altogether
+    var workout: WorkoutTemplate // could that be a problem? // see if i can avoid binding altogether
+    // var exercise: WorkoutTemplate.ExerciseData
     
+    @EnvironmentObject var workoutStore: WorkoutStore
+    
+    
+    var workoutIndex: Int {
+        workoutStore.workouts.firstIndex(where: {$0.id == workout.id})!
+    }
+    
+    var exerciseIndex: Int {
+        workoutStore.workouts[workoutIndex].exercise.firstIndex(where: {$0.id == workout.exercise[workoutIndex].id})!
+    }
+   
+    @State private var data = WorkoutTemplate.Data()
+
     
     @State private var isPresentingEditingView = false
     
+    
     var body: some View {
+        
         List {
-            if !(workout.exercise.isEmpty) {
-                ForEach($workout.exercise) {$exercise in
-                    NavigationLink(destination: ExerciseCardView(exercise: $exercise)) { // not the best idea.
-                        ListExerciseCardView(exercise: exercise)
-                    }
-                    .listRowBackground(workout.theme.mainColor)
+            ForEach(workoutStore.workouts[workoutIndex].exercise) {exercise in
+                NavigationLink(destination: ExerciseCardView(exercise: exercise, wholeExercise: workoutStore.workouts[workoutIndex])) {
+                    // not the best idea.
+                    ListExerciseCardView(exercise: exercise)
                 }
-                .onDelete {indices in
-                    workout.exercise.remove(atOffsets: indices)
-                }
+                .isDetailLink(false)
+                .listRowBackground(workoutStore.workouts[workoutIndex].theme.mainColor)
+            }
+            .onDelete {indices in
+                workoutStore.workouts[workoutIndex].exercise.remove(atOffsets: indices)
             }
         }
-        .navigationTitle(workout.title)
-        .toolbar {
-            Button("Edit") // maybe change it to a "+" with a feature of adding a new exercise
-            {
-                isPresentingEditingView = true
-                // looks like its a case when it creates a new instance and depending on changes eigher opdates ot or discards. i need same structure with editing my views.
-                // however if im making any changes, would it make sense to keep them?
-                data = workout.data // signs data to a new value // may be useful
-            }
+        
+        
+        
+        
+        
+        
+        /*
+         
+         .navigationTitle(workout.title)
+         .toolbar {
+             Button("Edit") // maybe change it to a "+" with a feature of adding a new exercise
+             {
+                 isPresentingEditingView = true
+                 // looks like its a case when it creates a new instance and depending on changes eigher opdates ot or discards. i need same structure with editing my views.
+                 // however if im making any changes, would it make sense to keep them?
+                 data = workout.data // signs data to a new value // may be useful
+             }
+         
+         */
+            
+            /*
             .sheet(isPresented: $isPresentingEditingView) {
                 // examine this, this section suppose to update information passed from one view to another.
                 NavigationView {
@@ -54,28 +80,34 @@ struct DetailView: View {
                             ToolbarItem(placement: .confirmationAction) {
                                 Button("Done") {
                                     isPresentingEditingView = false
-                                    workout.update(from: data) // simply wrong // but might be necessary
+                                    workoutStore.workouts[workoutIndex].update(from: data) // simply wrong // but might be necessary
                                 }
                             }
                         }
                 }
             }
-        }
+            
+            */
+     //   }
+    
     }
 }
 
 struct DetailView_Previews: PreviewProvider {
+    static var workoutStore = WorkoutStore()
+    
     static var previews: some View {
         Group {
             NavigationView {
-                DetailView(workout: .constant(WorkoutTemplate.sampleData[0]))
+                DetailView(workout: WorkoutTemplate.sampleData[0])
             }
             
             NavigationView {
-                DetailView(workout: .constant(WorkoutTemplate.sampleData[0]))
+                DetailView(workout: WorkoutTemplate.sampleData[0])
             }
             .environment(\.colorScheme, .dark)
         }
+        .environmentObject(workoutStore)
     }
 }
 

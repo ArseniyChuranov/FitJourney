@@ -8,20 +8,28 @@
 import SwiftUI
 
 struct WorkoutsListView: View {
-    @Binding var workouts: [WorkoutTemplate]
+    // @Binding var
+    var workouts: [WorkoutTemplate]
     @Environment(\.scenePhase) private var scenePhase
     
     @State private var isPresentingNewWorkoutView = false
     @State private var newExercise = WorkoutTemplate.Data()
+    
+    @EnvironmentObject var workoutStore: WorkoutStore
+    
+    
+    
     let saveAction: ()->Void
     
     var body: some View {
         List {
-            ForEach($workouts) { $workout in
-                NavigationLink(destination: DetailView(workout: $workout)) {
-                    CardView(workout: workout)
+            ForEach(workoutStore.workouts) { indWorkout in
+                NavigationLink(destination: DetailView(workout: indWorkout)) {
+                    CardView(workout: indWorkout)
                 }
-                .listRowBackground(workout.theme.mainColor)
+                //.navigationViewStyle(StackNavigationViewStyle())
+                .isDetailLink(false) // DID I SPEND 4 DAYS FOR THIS
+                .listRowBackground(indWorkout.theme.mainColor)
                 .padding(.leading) // optional
             }
 
@@ -47,7 +55,7 @@ struct WorkoutsListView: View {
                         ToolbarItem(placement: .confirmationAction) {
                             Button("Add") {
                                 let newWorkout = WorkoutTemplate(data: newExercise)
-                                workouts.append(newWorkout)
+                                workoutStore.workouts.append(newWorkout)
                                 
                                 isPresentingNewWorkoutView = false
                                 newExercise = WorkoutTemplate.Data()
@@ -63,9 +71,12 @@ struct WorkoutsListView: View {
 }
 
 struct WorkoutsListView_Previews: PreviewProvider {
+    static let workoutStore = WorkoutStore()
+    
     static var previews: some View {
         NavigationView {
-            WorkoutsListView(workouts: .constant(WorkoutTemplate.sampleData), saveAction: {})
+            WorkoutsListView(workouts: WorkoutTemplate.sampleData, saveAction: {})
         }
+        .environmentObject(workoutStore)
     }
 }
