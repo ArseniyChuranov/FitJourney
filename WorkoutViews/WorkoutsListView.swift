@@ -8,8 +8,7 @@
 import SwiftUI
 
 struct WorkoutsListView: View {
-    // @Binding var
-    var workouts: [WorkoutTemplate]
+    @Binding var workouts: [WorkoutTemplate]
     @Environment(\.scenePhase) private var scenePhase
     
     @State private var isPresentingNewWorkoutView = false
@@ -23,8 +22,8 @@ struct WorkoutsListView: View {
     
     var body: some View {
         List {
-            ForEach(workoutStore.workouts) { indWorkout in
-                NavigationLink(destination: DetailView(workout: indWorkout)) {
+            ForEach($workoutStore.workouts) { $indWorkout in
+                NavigationLink(destination: DetailView(workout: $indWorkout)) {
                     CardView(workout: indWorkout)
                 }
                 //.navigationViewStyle(StackNavigationViewStyle())
@@ -75,7 +74,7 @@ struct WorkoutsListView_Previews: PreviewProvider {
     
     static var previews: some View {
         NavigationView {
-            WorkoutsListView(workouts: WorkoutTemplate.sampleData, saveAction: {})
+            WorkoutsListView(workouts: .constant(WorkoutTemplate.sampleData), saveAction: {})
         }
         .environmentObject(workoutStore)
     }

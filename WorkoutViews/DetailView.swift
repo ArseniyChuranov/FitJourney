@@ -8,20 +8,11 @@
 import SwiftUI
 
 struct DetailView: View {
-    // @Binding var workout: WorkoutTemplate // could that be a problem? // see if i can avoid binding altogether
-    var workout: WorkoutTemplate // could that be a problem? // see if i can avoid binding altogether
+    @Binding var workout: WorkoutTemplate
     // var exercise: WorkoutTemplate.ExerciseData
     
     @EnvironmentObject var workoutStore: WorkoutStore
-    
-    
-    var workoutIndex: Int {
-        workoutStore.workouts.firstIndex(where: {$0.id == workout.id})!
-    }
-    
-    var exerciseIndex: Int {
-        workoutStore.workouts[workoutIndex].exercise.firstIndex(where: {$0.id == workout.exercise[workoutIndex].id})!
-    }
+
    
     @State private var data = WorkoutTemplate.Data()
 
@@ -32,16 +23,16 @@ struct DetailView: View {
     var body: some View {
         
         List {
-            ForEach(workoutStore.workouts[workoutIndex].exercise) {exercise in
-                NavigationLink(destination: ExerciseCardView(exercise: exercise, wholeExercise: workoutStore.workouts[workoutIndex])) {
+            ForEach($workout.exercise) {$exercise in
+                NavigationLink(destination: ExerciseCardView(exercise: $exercise)) {
                     // not the best idea.
                     ListExerciseCardView(exercise: exercise)
                 }
                 .isDetailLink(false)
-                .listRowBackground(workoutStore.workouts[workoutIndex].theme.mainColor)
+                .listRowBackground(workout.theme.mainColor)
             }
             .onDelete {indices in
-                workoutStore.workouts[workoutIndex].exercise.remove(atOffsets: indices)
+                workout.exercise.remove(atOffsets: indices)
             }
         }
         
@@ -99,11 +90,11 @@ struct DetailView_Previews: PreviewProvider {
     static var previews: some View {
         Group {
             NavigationView {
-                DetailView(workout: WorkoutTemplate.sampleData[0])
+                DetailView(workout: .constant(WorkoutTemplate.sampleData[0]))
             }
             
             NavigationView {
-                DetailView(workout: WorkoutTemplate.sampleData[0])
+                DetailView(workout: .constant(WorkoutTemplate.sampleData[0]))
             }
             .environment(\.colorScheme, .dark)
         }

@@ -12,37 +12,17 @@ import SwiftUI
 struct ExerciseCardView: View {
     
     @EnvironmentObject var exerciseObservable: WorkoutStore
-    var exercise: WorkoutTemplate.ExerciseData
-    // var exerciseSet: ExerciseSet
     
+    @Binding var exercise: WorkoutTemplate.ExerciseData
+    @State private var newExercise = ExerciseSet.Sets()
+
     @State private var newSetValue = ""
     @State private var newRepValue = ""
     @State private var newWeightValue = ""
-    @State private var totalExerciseCount = 0
     
     @State private var isAddingNewSets = false
     @State private var isPresentingAddNewSetView = false
     @State private var isPresentingEditingView = false
- 
-    // @Binding var exercise: WorkoutTemplate.ExerciseData
-    var wholeExercise: WorkoutTemplate
-
-    
-    // @Binding var exerciseName: String
-    @State private var newExercise = ExerciseSet.Sets()
-
-    // var exerciseSetsData = ExerciseSet.Sets()
-    
-    
-    
-    var workoutIndex: Int {
-        exerciseObservable.workouts.firstIndex(where: {$0.id == wholeExercise.id})!
-    }
-    
-    var exerciseIndex: Int {
-        exerciseObservable.workouts[workoutIndex].exercise.firstIndex(where: {$0.id == wholeExercise.exercise[workoutIndex].id})!
-    }
-
     
     var body: some View {
         ZStack {
@@ -74,7 +54,7 @@ struct ExerciseCardView: View {
                                 // do i need this whole thing?
                                 // closes the view
                                 
-                                exerciseObservable.workouts[workoutIndex].exercise[exerciseIndex].exerciseSets.append(newSet)
+                                exercise.exerciseSets.append(newSet)
                                 
                                 // exercise.exerciseSets.append(newSet)
                                 
@@ -109,7 +89,7 @@ struct ExerciseCardView: View {
                             }
                         }
                         .onDelete {sets in
-                            exerciseObservable.workouts[workoutIndex].exercise[exerciseIndex].exerciseSets.remove(atOffsets: sets)
+                            exercise.exerciseSets.remove(atOffsets: sets)
                         }
                         .frame(height: 15)
                         // might leave all editinf for a separate view
@@ -118,7 +98,7 @@ struct ExerciseCardView: View {
                     .padding()
                     .cornerRadius(15)
                     .backgroundStyle(.opacity(0.2)) // might be unnecessary
-                    .onTapGesture(count: 3) {
+                    .onTapGesture(count: 2) {
                         if (isPresentingAddNewSetView == false) {
                             isPresentingAddNewSetView = true
                         } else {
@@ -156,7 +136,7 @@ struct ExerciseCardView: View {
                                                      reps: Int(newRepValue) ?? 1,
                                                      weight: Int(newWeightValue) ?? 1)
                             
-                            exerciseObservable.workouts[workoutIndex].exercise[exerciseIndex].exerciseSets.append(newSet)
+                            exercise.exerciseSets.append(newSet)
                             isPresentingAddNewSetView = false
                             
                             newRepValue = ""
@@ -183,9 +163,9 @@ struct ExerciseCardView_Previews: PreviewProvider {
     
     static var previews: some View {
         Group {
-            ExerciseCardView(exercise: WorkoutTemplate.sampleData[0].exercise[0], wholeExercise: WorkoutTemplate.sampleData[0])
+            ExerciseCardView(exercise: .constant(WorkoutTemplate.sampleData[0].exercise[0]))
             
-            ExerciseCardView(exercise: WorkoutTemplate.sampleData[0].exercise[0], wholeExercise: WorkoutTemplate.sampleData[0])
+            ExerciseCardView(exercise: .constant(WorkoutTemplate.sampleData[0].exercise[0]))
                 .environment(\.colorScheme, .dark)
     
         }

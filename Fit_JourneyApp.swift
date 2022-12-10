@@ -16,7 +16,7 @@ struct Fit_JourneyApp: App {
     var body: some Scene {
         WindowGroup {
             NavigationView {
-                WorkoutsListView(workouts: store.workouts) {
+                WorkoutsListView(workouts: $store.workouts) {
                     Task {
                         do {
                             try await WorkoutStore.save(workouts: store.workouts)

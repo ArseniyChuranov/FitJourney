@@ -2,13 +2,14 @@
 //  ErrorView.swift
 //  Fit Journey
 //
-//  Created by Arseniy Churanov on 12/9/22.
+//  Created by Arseniy Churanov on 12/10/22.
 //
 
 import SwiftUI
 
 struct ErrorView: View {
     let errorWrapper: ErrorWrapper
+
     @Environment(\.dismiss) private var dismiss
     
     var body: some View {
@@ -30,7 +31,7 @@ struct ErrorView: View {
             .toolbar {
                 ToolbarItem(placement: .navigationBarTrailing) {
                     Button("Dismiss") {
-                    dismiss()
+                        dismiss()
                     }
                 }
             }
@@ -44,7 +45,8 @@ struct ErrorView_Previews: PreviewProvider {
     }
     
     static var wrapper: ErrorWrapper {
-        ErrorWrapper(error: SampleError.errorRequired, guidance: "You can ignore")
+        ErrorWrapper(error: SampleError.errorRequired,
+                     guidance: "You can safely ignore this error.")
     }
     
     static var previews: some View {
