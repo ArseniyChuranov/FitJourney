@@ -26,7 +26,6 @@ struct WorkoutsListView: View {
                 NavigationLink(destination: DetailView(workout: $indWorkout)) {
                     CardView(workout: indWorkout)
                 }
-                //.navigationViewStyle(StackNavigationViewStyle())
                 .isDetailLink(false) // DID I SPEND 4 DAYS FOR THIS
                 .listRowBackground(indWorkout.theme.mainColor)
                 .padding(.leading) // optional
@@ -35,15 +34,16 @@ struct WorkoutsListView: View {
         }
         .navigationTitle("Workouts")
         .toolbar {
+            // button that will allow to create a new workout.
             Button (action: {
                 isPresentingNewWorkoutView = true
             }) {
-                Image(systemName: "person.circle.fill")
+                Image(systemName: "plus")
             }
         }
         .sheet(isPresented: $isPresentingNewWorkoutView) {
             NavigationView {
-                NewExerciseEdit(data: $newExercise) // for now its a terrible solution I have to figure that one out, i shouldn't pass a separate exercise value, it should be included
+                NewExerciseEdit(data: $newExercise)
                     .toolbar {
                         ToolbarItem(placement: .cancellationAction) {
                             Button("Dismiss") {

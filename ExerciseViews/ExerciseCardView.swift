@@ -49,15 +49,8 @@ struct ExerciseCardView: View {
                                 let newSet = ExerciseSet(sets: exercise.exerciseSets.count + 1,
                                                          reps: Int(newRepValue) ?? 1,
                                                          weight: Int(newWeightValue) ?? 1)
-                                // Adds set to a list
-                                //exercise.exerciseSets.append(newSet)
-                                // do i need this whole thing?
-                                // closes the view
                                 
                                 exercise.exerciseSets.append(newSet)
-                                
-                                // exercise.exerciseSets.append(newSet)
-                                
                                 isPresentingAddNewSetView = false
                                 
                                 newRepValue = ""
@@ -76,23 +69,27 @@ struct ExerciseCardView: View {
                             Text(exercise.workoutName)
                                 .font(.title2)
                         }
-                        ForEach( exercise.exerciseSets) {individualSet in
-                            HStack {
-                                Text("Set:")
-                                Text(String("\(individualSet.sets)"))
-                                Spacer()
-                                Text("Reps:")
-                                Text(String(individualSet.reps))
-                                Spacer()
-                                Text("Weight:")
-                                Text(String(individualSet.weight))
+                        // for now i will keep info as a list to keep it more organized
+                        // possibly will have addition as a presenting sheet, will look more accurate.
+                        List {
+                            ForEach( exercise.exerciseSets) {individualSet in
+                                HStack {
+                                    Text("Set:")
+                                    Text(String("\(individualSet.sets)"))
+                                    Spacer()
+                                    Text("Reps:")
+                                    Text(String(individualSet.reps))
+                                    Spacer()
+                                    Text("Weight:")
+                                    Text(String(individualSet.weight))
+                                }
                             }
+                            .onDelete {sets in
+                                exercise.exerciseSets.remove(atOffsets: sets)
+                            }
+                            .frame(height: 15)
+                            // might leave all editinf for a separate view
                         }
-                        .onDelete {sets in
-                            exercise.exerciseSets.remove(atOffsets: sets)
-                        }
-                        .frame(height: 15)
-                        // might leave all editinf for a separate view
                         
                     }
                     .padding()

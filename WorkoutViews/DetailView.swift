@@ -12,13 +12,8 @@ struct DetailView: View {
     // var exercise: WorkoutTemplate.ExerciseData
     
     @EnvironmentObject var workoutStore: WorkoutStore
-
-   
     @State private var data = WorkoutTemplate.Data()
-
-    
     @State private var isPresentingEditingView = false
-    
     
     var body: some View {
         
@@ -35,29 +30,15 @@ struct DetailView: View {
                 workout.exercise.remove(atOffsets: indices)
             }
         }
-        
-        
-        
-        
-        
-        
-        /*
-         
-         .navigationTitle(workout.title)
-         .toolbar {
-             Button("Edit") // maybe change it to a "+" with a feature of adding a new exercise
-             {
-                 isPresentingEditingView = true
-                 // looks like its a case when it creates a new instance and depending on changes eigher opdates ot or discards. i need same structure with editing my views.
-                 // however if im making any changes, would it make sense to keep them?
-                 data = workout.data // signs data to a new value // may be useful
-             }
-         
-         */
-            
-            /*
+        .navigationTitle(workout.title)
+        .toolbar {
+            Button("Edit")
+            {
+                isPresentingEditingView = true
+                // however if im making any changes, would it make sense to keep them?
+                data = workout.data // signs data to a new value // may be useful
+            }
             .sheet(isPresented: $isPresentingEditingView) {
-                // examine this, this section suppose to update information passed from one view to another.
                 NavigationView {
                     DetailEditView(data: $data) // change to edit later // it takes data.
                         .navigationTitle(workout.title)
@@ -71,16 +52,13 @@ struct DetailView: View {
                             ToolbarItem(placement: .confirmationAction) {
                                 Button("Done") {
                                     isPresentingEditingView = false
-                                    workoutStore.workouts[workoutIndex].update(from: data) // simply wrong // but might be necessary
+                                    workout.update(from: data)
                                 }
                             }
                         }
                 }
             }
-            
-            */
-     //   }
-    
+        }
     }
 }
 
