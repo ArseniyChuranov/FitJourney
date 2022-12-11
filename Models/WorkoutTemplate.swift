@@ -131,6 +131,8 @@ extension WorkoutTemplate {
         ], theme: .navy)
     
     ]
+    
+    static let emptyWorkouts: [WorkoutTemplate] = []
 }
 
 

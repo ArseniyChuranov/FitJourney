@@ -23,45 +23,27 @@ struct DetailEditView: View {
         List {
             Section(header: Text(data.title)) {
                 
-                if(data.exercise.isEmpty) {
+                // see if this works
+                ForEach($data.exercise) {$exercise in
+                    // do i need a group here?
                     
-                    HStack {
-                        TextField("New Exercise", text: $newExerciseName)
-                        Button (action: {
-                            
-                            // create a color picker
+                    // This View is not the prettiest to be honest.
+                    ListExerciseCardView(exercise: exercise)
+                }
+                HStack {
+                    TextField("New Exercise", text: $newExerciseName)
+                        .font(.title)
+                    Button (action: {
+                        // create a color picker
+                        withAnimation {
                             let newExercise = WorkoutTemplate.ExerciseData(workoutName: newExerciseName, exerciseSets: newExerciseSets)
                             data.exercise.append(newExercise)
                             newExerciseName = ""
-                        }) {
-                            Image(systemName: "plus")
                         }
-                        .disabled(newExerciseName.isEmpty)
+                    }) {
+                        Image(systemName: "plus")
                     }
-                } else {
-                    ForEach($data.exercise) {$exercise in
-                        // do i need a group here?
-                        Group {
-                            ListExerciseCardView(exercise: exercise)
-                        }
-                    }
-                    
-                    
-                    HStack {
-                        TextField("New Exercise", text: $newExerciseName)
-                            .font(.title)
-                        Button (action: {
-                            
-                            // create a color picker
-                            let newExercise = WorkoutTemplate.ExerciseData(workoutName: newExerciseName, exerciseSets: newExerciseSets)
-                            data.exercise.append(newExercise)
-                            newExerciseName = ""
-                        }) {
-                            Image(systemName: "plus")
-                        }
-                        .disabled(newExerciseName.isEmpty)
-                    }
-                    
+                    .disabled(newExerciseName.isEmpty)
                 }
                 // create a view input that will take data and insert it to thiw view
             }
@@ -70,8 +52,16 @@ struct DetailEditView: View {
 }
 
 struct DetailEditView_Previews: PreviewProvider {
+    static var emptyExerciseData = WorkoutTemplate.Data(title: "Workout", exercise: [WorkoutTemplate.ExerciseData(workoutName: "No Sets", exerciseSets: [])])
+    
     static var previews: some View {
-        DetailEditView(data: .constant(WorkoutTemplate.sampleData[0].data))
+        Group {
+            DetailEditView(data: .constant(WorkoutTemplate.sampleData[0].data))
+                .previewDisplayName("Exercises with Sets")
+            
+            DetailEditView(data: .constant(emptyExerciseData))
+                .previewDisplayName("Empty Exercises")
+        }
     }
 }
 

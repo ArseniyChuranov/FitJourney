@@ -21,50 +21,68 @@ struct WorkoutsListView: View {
     let saveAction: ()->Void
     
     var body: some View {
-        List {
-            ForEach($workoutStore.workouts) { $indWorkout in
-                NavigationLink(destination: DetailView(workout: $indWorkout)) {
-                    CardView(workout: indWorkout)
+        
+        VStack {
+            
+            if(workouts.isEmpty) {
+                VStack {
+                    Spacer()
+                    Text("Looks like there are no workouts here yet.")
+                        .font(.title)
+                        .multilineTextAlignment(.center)
+                        .frame(minHeight: 20, idealHeight: 25)
+                    Button("Add New Workout", action: {
+                        isPresentingNewWorkoutView = true
+                    })
+                    .font(.title2)
                 }
-                .isDetailLink(false) // DID I SPEND 4 DAYS FOR THIS
-                .listRowBackground(indWorkout.theme.mainColor)
-                .padding(.leading) // optional
             }
-
-        }
-        .navigationTitle("Workouts")
-        .toolbar {
-            // button that will allow to create a new workout.
-            Button (action: {
-                isPresentingNewWorkoutView = true
-            }) {
-                Image(systemName: "plus")
-            }
-        }
-        .sheet(isPresented: $isPresentingNewWorkoutView) {
-            NavigationView {
-                NewExerciseEdit(data: $newExercise)
-                    .toolbar {
-                        ToolbarItem(placement: .cancellationAction) {
-                            Button("Dismiss") {
-                                isPresentingNewWorkoutView = false
-                                newExercise = WorkoutTemplate.Data()
-                            }
-                        }
-                        ToolbarItem(placement: .confirmationAction) {
-                            Button("Add") {
-                                let newWorkout = WorkoutTemplate(data: newExercise)
-                                workoutStore.workouts.append(newWorkout)
-                                
-                                isPresentingNewWorkoutView = false
-                                newExercise = WorkoutTemplate.Data()
-                            }
-                        }
+            
+            List {
+                ForEach($workouts) { $indWorkout in
+                    NavigationLink(destination: DetailView(workout: $indWorkout)) {
+                        CardView(workout: indWorkout)
                     }
+                    .isDetailLink(false) // DID I SPEND 4 DAYS FOR THIS
+                    .listRowBackground(indWorkout.theme.mainColor)
+                    .padding(.leading) // optional
+                }
+
             }
-        }
-        .onChange(of: scenePhase) { phase in
-            if phase == .inactive { saveAction() }
+            .navigationTitle("Workouts")
+            .toolbar {
+                // button that will allow to create a new workout.
+                Button (action: {
+                    isPresentingNewWorkoutView = true
+                }) {
+                    Image(systemName: "plus")
+                }
+            }
+            .sheet(isPresented: $isPresentingNewWorkoutView) {
+                NavigationView {
+                    NewExerciseEdit(data: $newExercise)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Dismiss") {
+                                    isPresentingNewWorkoutView = false
+                                    newExercise = WorkoutTemplate.Data()
+                                }
+                            }
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Add") {
+                                    let newWorkout = WorkoutTemplate(data: newExercise)
+                                    workouts.append(newWorkout)
+                                    
+                                    isPresentingNewWorkoutView = false
+                                    newExercise = WorkoutTemplate.Data()
+                                }
+                            }
+                        }
+                }
+            }
+            .onChange(of: scenePhase) { phase in
+                if phase == .inactive { saveAction() }
+            }
         }
     }
 }
@@ -73,8 +91,14 @@ struct WorkoutsListView_Previews: PreviewProvider {
     static let workoutStore = WorkoutStore()
     
     static var previews: some View {
-        NavigationView {
-            WorkoutsListView(workouts: .constant(WorkoutTemplate.sampleData), saveAction: {})
+        Group {
+            NavigationView {
+                WorkoutsListView(workouts: .constant(WorkoutTemplate.sampleData), saveAction: {})
+            }
+            
+            NavigationView {
+                WorkoutsListView(workouts: .constant(WorkoutTemplate.emptyWorkouts), saveAction: {})
+            }
         }
         .environmentObject(workoutStore)
     }

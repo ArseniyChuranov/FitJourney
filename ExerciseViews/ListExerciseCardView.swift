@@ -41,12 +41,15 @@ struct ListExerciseCardView: View {
 }
 
 struct ListExerciseCardView_Previews: PreviewProvider {
+    static var emptyExerciseList = WorkoutTemplate.ExerciseData(workoutName: "No Sets Exercise", exerciseSets: [])
     static var previews: some View {
         Group {
             ListExerciseCardView(exercise: WorkoutTemplate.sampleData[0].exercise[0])
             
             ListExerciseCardView(exercise: WorkoutTemplate.sampleData[0].exercise[0])
                 .environment(\.colorScheme, .dark)
+            
+            ListExerciseCardView(exercise: emptyExerciseList)
         }
     }
 }

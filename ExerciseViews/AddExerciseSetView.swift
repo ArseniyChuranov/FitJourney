@@ -15,7 +15,6 @@ struct AddExerciseSetView: View {
     @State private var reps = ""
     @State private var weight = ""
     
-    @State private var isPresentingAddNewExerciseView = false
     
     @State private var exerciseNewSets = ExerciseSet.Sets()
     
@@ -24,15 +23,15 @@ struct AddExerciseSetView: View {
             
             HStack {
                 Text(exercise.workoutName)
-                    .font(.title)
+                    .font(.largeTitle)
             }
             
             HStack {
                 TextField("Reps", text: $reps)
-                    .font(.largeTitle)
+                    .font(.title)
                     .keyboardType(.numberPad)
                 TextField("Weight", text: $weight)
-                    .font(.largeTitle)
+                    .font(.title)
                     .keyboardType(.numberPad)
             }
             HStack {
@@ -47,15 +46,32 @@ struct AddExerciseSetView: View {
                         
                         reps = ""
                         weight = ""
-                         
-                        isPresentingAddNewExerciseView = false
                     }
                 }) {
                     Text("Add New Set")
-                        .font(.largeTitle)
                         .disabled(weight.isEmpty)
+                        .font(.title)
+                        // .disabled(weight.isEmpty)
                 }
             }
+            ForEach( exercise.exerciseSets) {individualSet in
+                HStack {
+                    Text("Set:")
+                    Text(String("\(individualSet.sets)"))
+                    Spacer()
+                    Text("Reps:")
+                    Text(String(individualSet.reps))
+                    Spacer()
+                    Text("Weight:")
+                    Text(String(individualSet.weight))
+                }
+                .font(.title)
+                .padding()
+            }
+            .onDelete {sets in
+                exercise.exerciseSets.remove(atOffsets: sets)
+            }
+            Spacer()
         }
     }
 }

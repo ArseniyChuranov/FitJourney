@@ -17,35 +17,24 @@ struct DetailView: View {
     
     var body: some View {
         
-        if(workout.exercise.isEmpty) {
-            VStack {
-                Text("Looks like there are no Exercises")
-                Button("Add New Exercise", action: {
-                    isPresentingEditingView = true
-                })
-                .sheet(isPresented: $isPresentingEditingView) {
-                    NavigationView {
-                        DetailEditView(data: $data) // change to edit later // it takes data.
-                            .navigationTitle(workout.title)
-                            .toolbar {
-                                ToolbarItem(placement: .cancellationAction) {
-                                    Button("Cancel") {
-                                        isPresentingEditingView = false
-                                        
-                                    }
-                                }
-                                ToolbarItem(placement: .confirmationAction) {
-                                    Button("Done") {
-                                        isPresentingEditingView = false
-                                        workout.update(from: data)
-                                    }
-                                }
-                            }
-                    }
+        VStack {
+            
+            if(workout.exercise.isEmpty) {
+                
+                VStack {
+                    Text("Looks like there are no exercises")
+                        .font(.title2)
+                        .frame(height: 20)
+                    Button("Add New Exercise", action: {
+                        isPresentingEditingView = true
+                        data = workout.data
+                    })
+                    .font(.title)
                 }
+                .padding()
             }
             
-        } else {
+            // see why view spawns in the center instead of up top
             
             List {
                 ForEach($workout.exercise) {$exercise in
@@ -53,43 +42,45 @@ struct DetailView: View {
                         // not the best idea.
                         ListExerciseCardView(exercise: exercise)
                     }
-                    .isDetailLink(false)
+                    .isDetailLink(false) // not sure if needed here
                     .listRowBackground(workout.theme.mainColor)
                 }
                 .onDelete {indices in
                     workout.exercise.remove(atOffsets: indices)
                 }
             }
-            .navigationTitle(workout.title)
-            .toolbar {
-                Button(action: {
-                    isPresentingEditingView = true
-                    // however if im making any changes, would it make sense to keep them?
-                    data = workout.data // signs data to a new value // may be useful
-                }) {
-                    Image(systemName: "plus")
-                }
-                .sheet(isPresented: $isPresentingEditingView) {
-                    NavigationView {
-                        DetailEditView(data: $data) // change to edit later // it takes data.
-                            .navigationTitle(workout.title)
-                            .toolbar {
-                                ToolbarItem(placement: .cancellationAction) {
-                                    Button("Cancel") {
-                                        isPresentingEditingView = false
-                                        
-                                    }
-                                }
-                                ToolbarItem(placement: .confirmationAction) {
-                                    Button("Done") {
-                                        isPresentingEditingView = false
-                                        workout.update(from: data)
-                                    }
+            
+        }
+        .navigationTitle(workout.title)
+        .toolbar {
+            Button(action: {
+                isPresentingEditingView = true
+                // however if im making any changes, would it make sense to keep them?
+                data = workout.data // signs data to a new value // may be useful
+            }) {
+                Image(systemName: "plus")
+            }
+            .sheet(isPresented: $isPresentingEditingView) {
+                NavigationView {
+                    DetailEditView(data: $data) // change to edit later // it takes data.
+                        .navigationTitle(workout.title)
+                        .toolbar {
+                            ToolbarItem(placement: .cancellationAction) {
+                                Button("Cancel") {
+                                    isPresentingEditingView = false
+                                    
                                 }
                             }
-                    }
+                            ToolbarItem(placement: .confirmationAction) {
+                                Button("Done") {
+                                    isPresentingEditingView = false
+                                    workout.update(from: data)
+                                }
+                            }
+                        }
                 }
             }
+            .padding()
         }
     }
 }
@@ -97,16 +88,27 @@ struct DetailView: View {
 struct DetailView_Previews: PreviewProvider {
     static var workoutStore = WorkoutStore()
     
+    static var noExercisesWorkout = WorkoutTemplate.init(title: "Empty Workout", exercise: [], theme: .lavender)
+    
+    
     static var previews: some View {
         Group {
             NavigationView {
                 DetailView(workout: .constant(WorkoutTemplate.sampleData[0]))
             }
+            .previewDisplayName("Light Theme Appearance")
+            
             
             NavigationView {
                 DetailView(workout: .constant(WorkoutTemplate.sampleData[0]))
             }
             .environment(\.colorScheme, .dark)
+            .previewDisplayName("Dark Theme Appearance")
+            
+            NavigationView {
+                DetailView(workout: .constant(noExercisesWorkout))
+            }
+            .previewDisplayName("No Exercise Appearance")
         }
         .environmentObject(workoutStore)
     }
