@@ -34,6 +34,8 @@ struct ExerciseCardView: View {
                 if(exercise.exerciseSets.isEmpty) {
                     //  Default view that presents in case there are no sets for a workout
                     
+                    // change it to a custom button to "Add new Set" that will present a sheet with a set addition form?
+                    
                     VStack {
                         HStack {
                             Text(exercise.workoutName)
@@ -104,20 +106,6 @@ struct ExerciseCardView: View {
                             newWeightValue = ""
                         }
                     }
-                    
-                    
-                    /*
-                    .toolbar {
-                        Button("Edit") {
-                            isPresentingEditingView = true
-                            // maybe add a func that will create a new instance of an exercise.
-                        }
-                        .sheet(isPresented: $isPresentingEditingView) {
-                            EditExerciseCardView(exercise: $exerciseObservable.workouts[0].exercise[0])
-                        }
-                    }
-                     
-                     */
                 }
                 
                 if(isPresentingAddNewSetView == true) {
@@ -146,6 +134,15 @@ struct ExerciseCardView: View {
                     }
                     .padding()
                     .cornerRadius(15)
+                }
+            }
+            .toolbar {
+                Button("Edit") {
+                    isPresentingEditingView = true
+                    // maybe add a func that will create a new instance of an exercise.
+                }
+                .sheet(isPresented: $isPresentingEditingView) {
+                    AddExerciseSetView(exercise: $exercise)
                 }
             }
         }

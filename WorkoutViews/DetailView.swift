@@ -17,45 +17,77 @@ struct DetailView: View {
     
     var body: some View {
         
-        List {
-            ForEach($workout.exercise) {$exercise in
-                NavigationLink(destination: ExerciseCardView(exercise: $exercise)) {
-                    // not the best idea.
-                    ListExerciseCardView(exercise: exercise)
+        if(workout.exercise.isEmpty) {
+            VStack {
+                Text("Looks like there are no Exercises")
+                Button("Add New Exercise", action: {
+                    isPresentingEditingView = true
+                })
+                .sheet(isPresented: $isPresentingEditingView) {
+                    NavigationView {
+                        DetailEditView(data: $data) // change to edit later // it takes data.
+                            .navigationTitle(workout.title)
+                            .toolbar {
+                                ToolbarItem(placement: .cancellationAction) {
+                                    Button("Cancel") {
+                                        isPresentingEditingView = false
+                                        
+                                    }
+                                }
+                                ToolbarItem(placement: .confirmationAction) {
+                                    Button("Done") {
+                                        isPresentingEditingView = false
+                                        workout.update(from: data)
+                                    }
+                                }
+                            }
+                    }
                 }
-                .isDetailLink(false)
-                .listRowBackground(workout.theme.mainColor)
             }
-            .onDelete {indices in
-                workout.exercise.remove(atOffsets: indices)
+            
+        } else {
+            
+            List {
+                ForEach($workout.exercise) {$exercise in
+                    NavigationLink(destination: ExerciseCardView(exercise: $exercise)) {
+                        // not the best idea.
+                        ListExerciseCardView(exercise: exercise)
+                    }
+                    .isDetailLink(false)
+                    .listRowBackground(workout.theme.mainColor)
+                }
+                .onDelete {indices in
+                    workout.exercise.remove(atOffsets: indices)
+                }
             }
-        }
-        .navigationTitle(workout.title)
-        .toolbar {
-            Button("Edit")
-            {
-                isPresentingEditingView = true
-                // however if im making any changes, would it make sense to keep them?
-                data = workout.data // signs data to a new value // may be useful
-            }
-            .sheet(isPresented: $isPresentingEditingView) {
-                NavigationView {
-                    DetailEditView(data: $data) // change to edit later // it takes data.
-                        .navigationTitle(workout.title)
-                        .toolbar {
-                            ToolbarItem(placement: .cancellationAction) {
-                                Button("Cancel") {
-                                    isPresentingEditingView = false
-                                    
+            .navigationTitle(workout.title)
+            .toolbar {
+                Button(action: {
+                    isPresentingEditingView = true
+                    // however if im making any changes, would it make sense to keep them?
+                    data = workout.data // signs data to a new value // may be useful
+                }) {
+                    Image(systemName: "plus")
+                }
+                .sheet(isPresented: $isPresentingEditingView) {
+                    NavigationView {
+                        DetailEditView(data: $data) // change to edit later // it takes data.
+                            .navigationTitle(workout.title)
+                            .toolbar {
+                                ToolbarItem(placement: .cancellationAction) {
+                                    Button("Cancel") {
+                                        isPresentingEditingView = false
+                                        
+                                    }
+                                }
+                                ToolbarItem(placement: .confirmationAction) {
+                                    Button("Done") {
+                                        isPresentingEditingView = false
+                                        workout.update(from: data)
+                                    }
                                 }
                             }
-                            ToolbarItem(placement: .confirmationAction) {
-                                Button("Done") {
-                                    isPresentingEditingView = false
-                                    workout.update(from: data)
-                                }
-                            }
-                        }
+                    }
                 }
             }
         }
