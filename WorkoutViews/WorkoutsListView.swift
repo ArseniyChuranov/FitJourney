@@ -47,8 +47,12 @@ struct WorkoutsListView: View {
                     .listRowBackground(indWorkout.theme.mainColor)
                     .padding(.leading) // optional
                 }
-
+                // allows to delete individual workouts
+                .onDelete { indices in
+                    workouts.remove(atOffsets: indices)
+                }
             }
+
             .navigationTitle("Workouts")
             .toolbar {
                 // button that will allow to create a new workout.
