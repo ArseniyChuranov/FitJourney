@@ -15,6 +15,7 @@ struct ExerciseCardView: View {
     
     @Binding var exercise: WorkoutTemplate.ExerciseData
     @State private var newExercise = ExerciseSet.Sets()
+    @State private var thisViewList: [ExerciseSet] = []
 
     @State private var newSetValue = ""
     @State private var newRepValue = ""
@@ -75,21 +76,25 @@ struct ExerciseCardView: View {
                     Image(systemName: "plus")
                 }
                 .sheet(isPresented: $isPresentingAddNewSetView) {
-                    AddExerciseSetView(exercise: $exercise)
-                        .presentationDetents([.medium])
-                        .toolbar {
-                            ToolbarItem(placement: .cancellationAction) {
-                                Button("Cancel") {
-                                    isPresentingAddNewSetView = false
-                                    
+                    NavigationView {
+                        // change exercise to a data passing info
+                        AddExerciseSetView(exercise: $exercise)
+                            //.presentationDetents([.medium])
+                            .toolbar {
+                                ToolbarItem(placement: .cancellationAction) {
+                                    Button("Cancel") {
+                                        isPresentingAddNewSetView = false
+                                        
+                                    }
                                 }
-                            }
-                            ToolbarItem(placement: .confirmationAction) {
-                                Button("Done") {
-                                    isPresentingAddNewSetView = false
+                                ToolbarItem(placement: .confirmationAction) {
+                                    Button("Done") {
+                                        // exercise.exerciseSets.append(contentsOf: thisViewList)
+                                        isPresentingAddNewSetView = false
+                                    }
                                 }
-                            }
                         }
+                    }
                 }
                 .padding()
     

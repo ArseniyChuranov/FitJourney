@@ -33,9 +33,11 @@ struct NewSetsCardView: View {
             HStack {
                 Button(action: {
                     withAnimation {
+                        /*
                         let newSet = ExerciseSet(sets: newSet + 1,
                                                  reps: Int(newRep) ?? 1,
                                                  weight: Int(newWeight) ?? 0)
+                         */
                     }
                 }) {
                     Text("Add New Set")

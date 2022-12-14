@@ -39,8 +39,8 @@ extension ExerciseSet {
     
     // variable SetsData allows to create new Sets??
     
-    var setsData: Sets {
-        Sets(sets: sets, reps: reps, weight: weight)
+    var setsData: [Sets] {
+        [Sets(sets: sets, reps: reps, weight: weight)]
     }
     
     mutating func updateSets(from setsData: Sets) {

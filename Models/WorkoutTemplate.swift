@@ -25,14 +25,7 @@
 import Foundation
 import Combine 
 
-/*
-final class WorkoutTemplate: ObservableObject {
-    @Published var workoutTemplate: [WorkoutTemplate] =
-}
- 
- // i can try to make it as an observable obkect when i introduce a load/save feature.
- 
- */
+
 // Workout template is essentially a workout, it contains unique ID, workout name, exercises, and a theme
 
 struct WorkoutTemplate: Identifiable, Codable {
@@ -135,21 +128,3 @@ extension WorkoutTemplate {
     static let emptyWorkouts: [WorkoutTemplate] = []
 }
 
-
-
-/*
- 
- extension WorkoutTemplate {
-     static let sampleData: [WorkoutTemplate] =
-     [
-         WorkoutTemplate(title: "Push", exercise: ["Bench press", "Military Press", "Pushups", "Shoulder Press"], exerciseValue: [140.0, 100.0, 10, 35.0 ], theme: .seafoam),
-         WorkoutTemplate(title: "Pull", exercise: ["Deadlift", "Pullups", "Cable Triceps Curl"], exerciseValue: [200.0, 5.0, 30.0], theme: .lavender),
-         WorkoutTemplate(title: "Legs", exercise: ["Squats", "Romanian Deadlift", "Quad Curls", "Calve Raises"], exerciseValue: [150.0, 100.0, 80.0, 25.0], theme: .navy)
-     
-     ]
- }
- 
- ExerciseData(workoutName: "Military Press", sets: 4, reps: 8, weight: 120),
- ExerciseData(workoutName: "Pushups", sets: 3, reps: 12, weight: 0)
- 
- */

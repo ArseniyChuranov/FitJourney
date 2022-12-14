@@ -19,59 +19,84 @@ struct AddExerciseSetView: View {
     @State private var exerciseNewSets = ExerciseSet.Sets()
     
     var body: some View {
-        VStack(alignment: .center) {
-            
-            HStack {
-                Text(exercise.workoutName)
-                    .font(.largeTitle)
-            }
-            
-            HStack {
-                TextField("Reps", text: $reps)
-                    .font(.title)
-                    .keyboardType(.numberPad)
-                TextField("Weight", text: $weight)
-                    .font(.title)
-                    .keyboardType(.numberPad)
-            }
-            HStack {
-                Button(action: {
-                    withAnimation {
-                        let newSet = ExerciseSet(sets: exercise.exerciseSets.count + 1,
-                                                 reps: Int(reps) ?? 1,
-                                                 weight: Int(weight) ?? 1
-                        )
-                        
-                        exercise.exerciseSets.append(newSet)
-                        
-                        reps = ""
-                        weight = ""
-                    }
-                }) {
-                    Text("Add New Set")
-                        .disabled(weight.isEmpty)
-                        .font(.title)
-                        // .disabled(weight.isEmpty)
-                }
-            }
-            ForEach( exercise.exerciseSets) {individualSet in
+        Section {
+            VStack(alignment: .center) {
+                
                 HStack {
-                    Text("Set:")
-                    Text(String("\(individualSet.sets)"))
-                    Spacer()
-                    Text("Reps:")
-                    Text(String(individualSet.reps))
-                    Spacer()
-                    Text("Weight:")
-                    Text(String(individualSet.weight))
+                    Text(exercise.workoutName)
+                        .font(.largeTitle)
                 }
-                .font(.title)
-                .padding()
+                
+                if(!exercise.exerciseSets.isEmpty) {
+                    Section {
+                        ForEach(exercise.exerciseSets) {individualSet in
+                            HStack {
+                                Text("Set: \(individualSet.sets)")
+                                //Text(String("\(individualSet.sets)"))
+                                Spacer()
+                                Text("Reps: \(individualSet.reps)")
+                                //Text(String(individualSet.reps))
+                                Spacer()
+                                Text("Weight: \(individualSet.reps)")
+                                //Text(String(individualSet.weight))
+                            }
+                            .font(.title2)
+                            .padding()
+                        }
+                        .onDelete {sets in
+                            exercise.exerciseSets.remove(atOffsets: sets)
+                        }
+                    }
+                }
+                
+                Section {
+                    HStack {
+                        Text("Set: \(exercise.exerciseSets.count + 1)")
+                        Spacer()
+                        TextField("Reps:", text: $reps)
+                            .keyboardType(.numberPad)
+                        Spacer()
+                        TextField("Weight:", text: $weight)
+                            .keyboardType(.numberPad)
+                    }
+                    .font(.title2)
+                    .padding()
+                    
+                    HStack {
+                        Button(action: {
+                            withAnimation {
+                                let newSet = ExerciseSet(sets: exercise.exerciseSets.count + 1,
+                                                         reps: Int(reps) ?? 1,
+                                                         weight: Int(weight) ?? 1
+                                )
+                                
+                                /*
+                                
+                                let localSet = ExerciseSet(sets: thisViewList.count + 1,
+                                                         reps: Int(reps) ?? 1,
+                                                         weight: Int(weight) ?? 1
+                                )
+                                
+                                thisViewList.append(localSet)
+                                */
+                                
+                                exercise.exerciseSets.append(newSet)
+                                
+                                
+                                reps = ""
+                                weight = ""
+                            }
+                        }) {
+                            Text("Add New Set")
+                                .disabled(weight.isEmpty)
+                                .font(.title)
+                                // .disabled(weight.isEmpty)
+                        }
+                    }
+                }
+                
+                Spacer()
             }
-            .onDelete {sets in
-                exercise.exerciseSets.remove(atOffsets: sets)
-            }
-            Spacer()
         }
     }
 }

@@ -57,6 +57,7 @@ struct DetailView: View {
                 isPresentingEditingView = true
                 // however if im making any changes, would it make sense to keep them?
                 data = workout.data // signs data to a new value // may be useful
+                // data = workout.data
             }) {
                 Image(systemName: "plus")
             }
