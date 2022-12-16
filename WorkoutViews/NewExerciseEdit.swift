@@ -9,16 +9,33 @@
 
 import SwiftUI
 
+enum textField: Hashable {
+    case workoutName
+    case exerciseName
+    case defaultCase
+}
+
 struct NewExerciseEdit: View {
     
     @Binding var data: WorkoutTemplate.Data // if thats a new exercise should it be Binding?
     // @Binding var exercise: WorkoutTemplate.ExerciseData
     
     @State private var newExerciseName = ""
+    @State private var newEditedExerciseName = ""
     // @State private var newExerciseValue = 0.0
     @State private var newExerciseSetsValue = ""
     @State private var newExerciseRepsValue = ""
     @State private var newExerciseWeightValue = ""
+    @State private var isPresent = false
+    
+    @Binding var exercisesList: [String]
+    @FocusState private var focused: textField?
+    
+    
+    @Environment(\.scenePhase) private var scenePhase
+    
+    let saveAction: ()->Void
+
     
     @State private var isShowingSetView = false
     
@@ -27,20 +44,50 @@ struct NewExerciseEdit: View {
             Section(header: Text("New Workout")) {
                 TextField("Workout title", text: $data.title)
                     .font(.title)
+                    .onSubmit {
+                        focused = .exerciseName
+                    }
                 // for new view present one empty instance with a possibility to add more
-                
-                ForEach(data.exercise) {exercise in
-                    Text(exercise.workoutName)
+                ForEach(0..<exercisesList.count, id: \.self) {exercise in
+                    TextField(exercisesList[exercise], text: $exercisesList[exercise])
+                    // This method works pretty good, but if i will  change several exercises and then submit it, it will submit changes, see if i want to change it or not. I still assume that it is better to save shanges onDisappear
+                        .onSubmit {
+                            let updatedExercise = WorkoutTemplate.ExerciseData(workoutName: exercisesList[exercise], exerciseSets: [])
+                            
+                            data.exercise.insert(updatedExercise, at: exercise)
+                            data.exercise.remove(at: exercise + 1)
+                            
+                        }
+                        
+                    
+                        
+                        //.disabled(exercisesList[exercise].isEmpty) // only protection method
                     // Text(String(exercise.exerciseSets[0].weight)) // thats the way to get info out of the list!!!
                 }
                 .onDelete {indices in
                     data.exercise.remove(atOffsets: indices)
+                    exercisesList.remove(atOffsets: indices)
                 }
+ 
             
                 HStack {
                     TextField("New Exercise", text: $newExerciseName)
+                        .onSubmit {
+                            exercisesList.append(newExerciseName)
+                            // create a color picker
+                            
+                            let newExercise = WorkoutTemplate.ExerciseData(workoutName: newExerciseName, exerciseSets: []) // sets will be empty for now, since we are creating only a workout
+                            data.exercise.append(newExercise)
+                            newExerciseName = ""
+                            
+                            focused = .exerciseName
+                            
+                        }
+                        .focused($focused, equals: .exerciseName)
+  
+                    
                     Button (action: {
-                        
+                        exercisesList.append(newExerciseName)
                         // create a color picker
                         
                         let newExercise = WorkoutTemplate.ExerciseData(workoutName: newExerciseName, exerciseSets: []) // sets will be empty for now, since we are creating only a workout
@@ -51,43 +98,32 @@ struct NewExerciseEdit: View {
                     }
                     .disabled(newExerciseName.isEmpty)
                 }
-                
-                
-                /*
-                 
-                 
-                
-                ForEach(data.exercise) { title in
-                    VStack {
-                        HStack {
-                            TextField("New Exercise", text: $newExerciseName)
-                            Button (action: {
-                                withAnimation {
-                                    let exercise = WorkoutTemplate.ExerciseData(workoutName: newExerciseName,
-                                                                                exerciseSets: [WorkoutTemplate.ExerciseSet(sets: 1, reps: 1, weight: 1)]) // should be added later with other inputs.
-                                    data.exercise.append(exercise)
-
-                                }
-                            }) {
-                                Image(systemName: "plus")
-                            }
-                            .disabled(newExerciseName.isEmpty)
-                        }
-                        Spacer()
-                        HStack {
-                            TextField("Sets", text: $newExerciseSetsValue)
-                            Spacer()
-                            TextField("Reps", text: $newExerciseRepsValue)
-                        }
-                    }
-                    // fill the rest with other stuff
-                }
-                .onDelete { indices in
-                    data.exercise.remove(atOffsets: indices)
-                }
-                
-                */
             }
+            
+            // it kinda works? not the most efficent way i assume. still need polish
+            
+            /*
+             
+             
+             .onTapGesture {
+                 focused = .none
+             }
+             .onChange(of: focused) {newAction in
+                 var index = 0
+                 for exerciseName in exercisesList {
+                     if(exerciseName != data.exercise[index].workoutName) {
+                         let updatedExercise = WorkoutTemplate.ExerciseData(workoutName: exercisesList[index], exerciseSets: [])
+                         
+                         data.exercise.insert(updatedExercise, at: index)
+                         data.exercise.remove(at: index + 1)
+                     }
+                     
+                     index = index + 1
+                 }
+             }
+             
+             
+             */
         }
     }
 }
@@ -95,9 +131,9 @@ struct NewExerciseEdit: View {
 struct NewExerciseEdit_Previews: PreviewProvider {
     static var previews: some View {
         Group {
-            NewExerciseEdit(data: .constant(WorkoutTemplate.sampleData[0].data))
+            NewExerciseEdit(data: .constant(WorkoutTemplate.sampleData[0].data), exercisesList: .constant([]), saveAction: {})
             
-            NewExerciseEdit(data: .constant(WorkoutTemplate.sampleData[0].data))
+            NewExerciseEdit(data: .constant(WorkoutTemplate.sampleData[0].data), exercisesList: .constant([]), saveAction: {})
                 .environment(\.colorScheme, .dark)
         }
     }

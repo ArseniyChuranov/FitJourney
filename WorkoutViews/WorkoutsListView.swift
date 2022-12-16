@@ -12,7 +12,10 @@ struct WorkoutsListView: View {
     @Environment(\.scenePhase) private var scenePhase
     
     @State private var isPresentingNewWorkoutView = false
+    @State private var isPresentingEditingView = false
     @State private var newExercise = WorkoutTemplate.Data()
+    @State private var editingExercise = WorkoutTemplate.Data()
+    @State var bindingList: [String] = []
     
     @EnvironmentObject var workoutStore: WorkoutStore
     
@@ -46,11 +49,22 @@ struct WorkoutsListView: View {
                     .isDetailLink(false) // DID I SPEND 4 DAYS FOR THIS
                     .listRowBackground(indWorkout.theme.mainColor)
                     .padding(.leading) // optional
+                    .swipeActions(edge: .leading){
+                        Button("Edit", action: {
+                            isPresentingEditingView = true
+                            editingExercise = WorkoutTemplate.Data(title: indWorkout.title, exercise:indWorkout.exercise, theme: indWorkout.theme)
+                        })
+                    }
                 }
                 // allows to delete individual workouts
                 .onDelete { indices in
                     workouts.remove(atOffsets: indices)
                 }
+                /*
+                .onTapGesture(count: 2) {
+                    isPresentingEditingView = true
+                }
+                 */
             }
 
             .navigationTitle("Workouts")
@@ -62,9 +76,14 @@ struct WorkoutsListView: View {
                     Image(systemName: "plus")
                 }
             }
+            .sheet(isPresented: $isPresentingEditingView) {
+                NavigationView {
+                    WorkoutEditView(workout: $editingExercise)
+                }
+            }
             .sheet(isPresented: $isPresentingNewWorkoutView) {
                 NavigationView {
-                    NewExerciseEdit(data: $newExercise)
+                    NewExerciseEdit(data: $newExercise, exercisesList: $bindingList, saveAction: {})
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
                                 Button("Dismiss") {
@@ -74,7 +93,23 @@ struct WorkoutsListView: View {
                             }
                             ToolbarItem(placement: .confirmationAction) {
                                 Button("Add") {
-                                    let newWorkout = WorkoutTemplate(data: newExercise)
+                                    // it just works.
+                                    var newWorkout = WorkoutTemplate(data: newExercise)
+                                    
+                                    var index = 0
+                                    for exerciseName in bindingList {
+                                        if(exerciseName != newWorkout.exercise[index].workoutName) {
+                                            let updatedExercise = WorkoutTemplate.ExerciseData(workoutName: bindingList[index], exerciseSets: [])
+                                            
+                                            newWorkout.exercise.insert(updatedExercise, at: index)
+                                            newWorkout.exercise.remove(at: index + 1)
+                                        }
+                                        
+                                        index = index + 1
+                                    }
+                                    
+                                    
+                                    // let newWorkout = WorkoutTemplate(data: newExercise)
                                     workouts.append(newWorkout)
                                     
                                     isPresentingNewWorkoutView = false
