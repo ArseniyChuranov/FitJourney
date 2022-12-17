@@ -78,6 +78,7 @@ struct WorkoutsListView: View {
                         Image(systemName: "plus")
                     }
                 }
+                /*
                 ToolbarItemGroup(placement: .navigationBarLeading) {
                     Button (action: {
                         // replace with a side bar menu
@@ -86,12 +87,15 @@ struct WorkoutsListView: View {
                         Image(systemName: "list.bullet")
                     }
                 }
+                 */
             }
+            /*
             .sheet(isPresented: $isPresentingEditingView) {
                 NavigationView {
                     WorkoutEditView(workout: $editingExercise)
                 }
             }
+             */
             .sheet(isPresented: $isPresentingNewWorkoutView) {
                 NavigationView {
                     NewExerciseEdit(data: $newExercise, exercisesList: $bindingList, saveAction: {})
