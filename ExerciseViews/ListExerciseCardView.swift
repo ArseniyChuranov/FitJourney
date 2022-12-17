@@ -23,6 +23,7 @@ struct ListExerciseCardView: View {
                         .font(.title)
                 }
                 ForEach(exercise.exerciseSets) {individualSet in
+                    // Account for trailing
                     HStack {
                         Text("Set:")
                         Text(String("\(individualSet.sets)"))

@@ -19,6 +19,8 @@
  
     Each set cell will have set value, number of reps, and weigth. Each set can be deleted.
  
+    Add Date in future to organize in Specific way.
+ 
  
  */
 
@@ -38,13 +40,11 @@ struct WorkoutTemplate: Identifiable, Codable {
     init(id: UUID = UUID(), title: String, exercise: [ExerciseData], theme: Theme) {
         self.id = id
         self.title = title
-        self.exercise = exercise // found a better solution // [CompleteWorkoutData.init(workoutName: "Bench Press", sets: 5, reps: 12, weight: 150)] // it scares me // how to pass a sample data value
+        self.exercise = exercise
         self.theme = theme
     }
 }
 
-// i donth think i need this one, the workout template should have all of the info
-// create a better method to store workouts, with proper info.
 
 extension WorkoutTemplate {
     

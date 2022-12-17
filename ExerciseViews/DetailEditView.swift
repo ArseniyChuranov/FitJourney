@@ -11,7 +11,8 @@ import SwiftUI
 
 struct DetailEditView: View {
     
-    @Binding var data: WorkoutTemplate.Data
+    @Binding var newExerciseList: [String]
+
     
     @State private var newExerciseName = ""
     @State private var newExerciseSets: [ExerciseSet] = []
@@ -19,26 +20,40 @@ struct DetailEditView: View {
     @State private var showPicker = false
     @State private var currentPick = 0
     
+    @FocusState private var focused: textField?
+    
     var body: some View {
         List {
-            Section(header: Text(data.title)) {
-                
-                // see if this works
-                ForEach($data.exercise) {$exercise in
-                    // do i need a group here?
-                    
-                    // This View is not the prettiest to be honest.
-                    ListExerciseCardView(exercise: exercise)
+            Section {
+                ForEach(0..<newExerciseList.count, id: \.self) {exercise in
+                    TextField(newExerciseList[exercise], text:  $newExerciseList[exercise])
                 }
+                .onDelete {indices in
+                    newExerciseList.remove(atOffsets: indices)
+                }
+        
                 HStack {
                     TextField("New Exercise", text: $newExerciseName)
                         .font(.title)
+                        .focused($focused, equals: .exerciseName)
+                        .onSubmit {
+                            if(!newExerciseName.isEmpty) {
+                                
+                                newExerciseList.append(newExerciseName)
+                                newExerciseName = ""
+                                if(focused != .exerciseName) {
+                                    focused = .exerciseName
+                                }
+                            }
+                        }
+                    
                     Button (action: {
-                        // create a color picker
                         withAnimation {
-                            let newExercise = WorkoutTemplate.ExerciseData(workoutName: newExerciseName, exerciseSets: newExerciseSets)
-                            data.exercise.append(newExercise)
+                            newExerciseList.append(newExerciseName)
                             newExerciseName = ""
+                            if(focused != .exerciseName) {
+                                focused = .exerciseName
+                            }
                         }
                     }) {
                         Image(systemName: "plus")
@@ -56,10 +71,10 @@ struct DetailEditView_Previews: PreviewProvider {
     
     static var previews: some View {
         Group {
-            DetailEditView(data: .constant(WorkoutTemplate.sampleData[0].data))
+            DetailEditView(newExerciseList: .constant([]))
                 .previewDisplayName("Exercises with Sets")
             
-            DetailEditView(data: .constant(emptyExerciseData))
+            DetailEditView(newExerciseList: .constant([]))
                 .previewDisplayName("Empty Exercises")
         }
     }

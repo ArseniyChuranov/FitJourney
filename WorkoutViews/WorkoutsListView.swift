@@ -13,6 +13,7 @@ struct WorkoutsListView: View {
     
     @State private var isPresentingNewWorkoutView = false
     @State private var isPresentingEditingView = false
+    @State private var isPresentingSideMenuView = false
     @State private var newExercise = WorkoutTemplate.Data()
     @State private var editingExercise = WorkoutTemplate.Data()
     @State var bindingList: [String] = []
@@ -69,11 +70,21 @@ struct WorkoutsListView: View {
 
             .navigationTitle("Workouts")
             .toolbar {
-                // button that will allow to create a new workout.
-                Button (action: {
-                    isPresentingNewWorkoutView = true
-                }) {
-                    Image(systemName: "plus")
+                ToolbarItemGroup(placement: .navigationBarTrailing) {
+                    // button that will allow to create a new workout.
+                    Button (action: {
+                        isPresentingNewWorkoutView = true
+                    }) {
+                        Image(systemName: "plus")
+                    }
+                }
+                ToolbarItemGroup(placement: .navigationBarLeading) {
+                    Button (action: {
+                        // replace with a side bar menu
+                        isPresentingNewWorkoutView = true
+                    }) {
+                        Image(systemName: "list.bullet")
+                    }
                 }
             }
             .sheet(isPresented: $isPresentingEditingView) {
@@ -89,6 +100,7 @@ struct WorkoutsListView: View {
                                 Button("Dismiss") {
                                     isPresentingNewWorkoutView = false
                                     newExercise = WorkoutTemplate.Data()
+                                    bindingList = []
                                 }
                             }
                             ToolbarItem(placement: .confirmationAction) {

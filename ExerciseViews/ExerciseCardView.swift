@@ -24,6 +24,9 @@ struct ExerciseCardView: View {
     @State private var isAddingNewSets = false
     @State private var isPresentingAddNewSetView = false
     
+    @State private var repsList: [String] = []
+    @State private var weightList: [String] = []
+    
     var body: some View {
         ZStack {
             Color("Background") // a simple way to create a background color for now.
@@ -47,7 +50,7 @@ struct ExerciseCardView: View {
                     .padding()
                 }
                 List {
-                    ForEach( exercise.exerciseSets) {individualSet in
+                    ForEach(exercise.exerciseSets) {individualSet in
                         HStack {
                             Text("Set:")
                             Text(String("\(individualSet.sets)"))
@@ -77,19 +80,38 @@ struct ExerciseCardView: View {
                 }
                 .sheet(isPresented: $isPresentingAddNewSetView) {
                     NavigationView {
-                        // change exercise to a data passing info
-                        AddExerciseSetView(exercise: $exercise)
+                        AddExerciseSetView(exercise: $exercise, repsList: $repsList, weightList: $weightList)
                             //.presentationDetents([.medium])
                             .toolbar {
                                 ToolbarItem(placement: .cancellationAction) {
                                     Button("Cancel") {
+                                        repsList = []
+                                        weightList = []
+                                        
                                         isPresentingAddNewSetView = false
                                         
                                     }
                                 }
                                 ToolbarItem(placement: .confirmationAction) {
                                     Button("Done") {
-                                        // exercise.exerciseSets.append(contentsOf: thisViewList)
+                                        // Filter results in case? see without it for now
+                                        // Convert data into Ints and add to the set.
+                                        if (!repsList.isEmpty) {
+                                            var index = 0
+                                            for _ in repsList {
+                                                let newRep = repsList[index]
+                                                let newWeight = weightList[index]
+                                                let newSet = ExerciseSet(sets: exercise.exerciseSets.count + 1, reps: Int(newRep) ?? 0, weight: Int(newWeight) ?? 0)
+                                                
+                                                exercise.exerciseSets.append(newSet)
+                                                
+                                                index = index + 1
+                                            }
+                                        }
+                                        
+                                        repsList = []
+                                        weightList = []
+                                        
                                         isPresentingAddNewSetView = false
                                     }
                                 }

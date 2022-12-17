@@ -14,13 +14,14 @@ struct DetailView: View {
     @EnvironmentObject var workoutStore: WorkoutStore
     @State private var data = WorkoutTemplate.Data()
     @State private var isPresentingEditingView = false
+    @State var newExerciseBindingList: [String] = []
     
     var body: some View {
         
         VStack {
+            // If there are no exercises, a custom view will appear with a button to create new exercises
             
             if(workout.exercise.isEmpty) {
-                
                 VStack {
                     Text("Looks like there are no exercises")
                         .font(.title2)
@@ -34,12 +35,10 @@ struct DetailView: View {
                 .padding()
             }
             
-            // see why view spawns in the center instead of up top
-            
             List {
                 ForEach($workout.exercise) {$exercise in
                     NavigationLink(destination: ExerciseCardView(exercise: $exercise)) {
-                        // not the best idea.
+                        // Separate view, needs further attention to details.
                         ListExerciseCardView(exercise: exercise)
                     }
                     .isDetailLink(false) // not sure if needed here
@@ -55,27 +54,56 @@ struct DetailView: View {
         .toolbar {
             Button(action: {
                 isPresentingEditingView = true
-                // however if im making any changes, would it make sense to keep them?
-                data = workout.data // signs data to a new value // may be useful
-                // data = workout.data
+                // This button is only for adding exercises, since its possible to edit and delete them here.
+                // This will clear in case empty BindingList
+                newExerciseBindingList = []
+                
             }) {
                 Image(systemName: "plus")
             }
             .sheet(isPresented: $isPresentingEditingView) {
                 NavigationView {
-                    DetailEditView(data: $data) // change to edit later // it takes data.
+                    // This view only take an empty binding list, that will or will not be filled with new exercises.
+                    DetailEditView(newExerciseList: $newExerciseBindingList)
                         .navigationTitle(workout.title)
                         .toolbar {
                             ToolbarItem(placement: .cancellationAction) {
                                 Button("Cancel") {
+                                    
+                                    // When "Cancel" pressed, sheet view will retract and all items in list will be cleared.
+                                    
                                     isPresentingEditingView = false
                                     
+                                    // Empty all
+                                    newExerciseBindingList = []
                                 }
                             }
                             ToolbarItem(placement: .confirmationAction) {
                                 Button("Done") {
+                                    // After pressing "Done" this will check for any changes in newExerciseBindingList and add any new exercises.
+                                    
+                                    // instance of an Old exercise to append new items
+                                    var oldExercice = WorkoutTemplate(title: workout.title, exercise: workout.exercise, theme: workout.theme)
+                                    
+                                    // For loop that fills workout with new information from sheet.
+                                    
+                                    for exercise in newExerciseBindingList {
+                                        let exercise = WorkoutTemplate.ExerciseData(workoutName: exercise, exerciseSets: [])
+                                        oldExercice.exercise.append(exercise)
+                                    }
+                                    
+                                    // Updates current view with a new Workout
+                                    
+                                    workout.update(from: oldExercice.data)
+                                    
+                                    // Hides current sheet view.
+                                    
                                     isPresentingEditingView = false
-                                    workout.update(from: data)
+                          
+                                    // Empty all
+                                    newExerciseBindingList = []
+                                    
+                                    
                                 }
                             }
                         }
@@ -115,28 +143,3 @@ struct DetailView_Previews: PreviewProvider {
     }
 }
 
-
-
-
-/*
- onDisappear {
-     
-     // add some functionality here maybe to allow it update info?
-     // read about dispatchQueue
-     
-     // workout.update(from: data) // Im not sure itd what i need....  // lmao no
-     /*
-     setsData.sets = workout.setsData.sets // ???
-     data = workout.data
-     workout.update(from: data) // ?????????????
-      */
-     
-     // not even sure i need that code above, looks like correct binding worked
-     
-     
-     // it just works.............
-     // print("After leaving workout.exercise looks like this")
-     // print(workout.exercise)
- }
- 
- */

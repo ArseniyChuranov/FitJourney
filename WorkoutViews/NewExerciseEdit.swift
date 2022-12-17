@@ -47,6 +47,17 @@ struct NewExerciseEdit: View {
                     .onSubmit {
                         focused = .exerciseName
                     }
+                
+                
+                
+                if #available(iOS 16.0, *) {
+                    ThemePicker(selection: $data.theme)
+                        .pickerStyle(.navigationLink)
+                } else {
+                    ThemePicker(selection: $data.theme)
+                }
+                
+                
                 // for new view present one empty instance with a possibility to add more
                 ForEach(0..<exercisesList.count, id: \.self) {exercise in
                     TextField(exercisesList[exercise], text: $exercisesList[exercise])
@@ -68,7 +79,6 @@ struct NewExerciseEdit: View {
                     data.exercise.remove(atOffsets: indices)
                     exercisesList.remove(atOffsets: indices)
                 }
- 
             
                 HStack {
                     TextField("New Exercise", text: $newExerciseName)
